@@ -1,2 +1,0 @@
-(this["webpackJsonpsecret-santa"]=this["webpackJsonpsecret-santa"]||[]).push([[0],[,,,function(e,n,t){e.exports=t(10)},,,,,function(e,n,t){},function(e,n,t){},function(e,n,t){"use strict";t.r(n);var a=t(0),c=t.n(a),r=t(2),s=t.n(r),o=(t(8),t(9),function(){return c.a.createElement("div",{className:"App"},"Hello world")});s.a.render(c.a.createElement(o,null),document.getElementById("root"))}],[[3,1,2]]]);
-//# sourceMappingURL=main.2497d649.chunk.js.map
