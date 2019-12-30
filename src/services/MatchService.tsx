@@ -16,7 +16,11 @@ export default class MatchService {
       let giverIndex = i;
       let receiverIndex = this.randomInteger(0, participants.length - 1);
 
-      while (receiverIndex === giverIndex || alreadyReceivedIndexes.includes(receiverIndex)) {
+      let receiverHasGiven = receiverIndex < giverIndex;
+      let receiversGivingMatch = matches.find(m => m.giver.name === participants[receiverIndex].name);
+      let givingToEachOther = receiverHasGiven && receiversGivingMatch?.giver.name === participants[giverIndex].name;
+
+      while (receiverIndex === giverIndex || alreadyReceivedIndexes.includes(receiverIndex) || givingToEachOther) {
         receiverIndex = this.randomInteger(0, participants.length - 1);
       }
 
