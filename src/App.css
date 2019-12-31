@@ -1,0 +1,11 @@
+.github-link {
+    color: #FFF;
+}
+
+.github-link:focus, .github-link:hover {
+    color: #DDD;
+}
+
+.tooltip:hover {
+    color: #555555;
+}

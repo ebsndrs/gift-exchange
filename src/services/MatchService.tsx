@@ -1,44 +1,100 @@
 import { Participant } from "../interfaces/Participant";
 import { Match } from "../interfaces/Match";
+import { Rules } from "../interfaces/Rules";
+import { Gender } from "../interfaces/Gender";
 
 export default class MatchService {
-  generateMatches(participants: Participant[]): Match[] {
-    let matches = this.generateMatchesWithNoRules(participants);
-
-    return matches;
+  async generateMatches(participants: Participant[], rules: Rules): Promise<Match[]> {
+    if (!rules.enforceHouseholdRule && !rules.enforceAgeGroupRule && !rules.enforceGenderRule && !rules.enforceCircularGiftingRule && !rules.enforcePreviousYearsRule) {
+      return this.simpleMatch(participants);
+    } else {
+      return this.complexMatch(participants, rules);
+    }
   }
 
-  private generateMatchesWithNoRules(participants: Participant[]): Match[] {
+  private simpleMatch(participants: Participant[]): Match[] {
     let matches: Match[] = [];
-    let alreadyReceivedIndexes: number[] = [];
+    let potentialReceivers = [...participants];
 
     for (let i = 0; i < participants.length; i++) {
-      let giverIndex = i;
-      let receiverIndex = this.randomInteger(0, participants.length - 1);
+      let receiverIndex = this.randomIndex(potentialReceivers.length);
 
-      let receiverHasGiven = receiverIndex < giverIndex;
-      let receiversGivingMatch = matches.find(m => m.giver.name === participants[receiverIndex].name);
-      let givingToEachOther = receiverHasGiven && receiversGivingMatch?.giver.name === participants[giverIndex].name;
-
-      while (receiverIndex === giverIndex || alreadyReceivedIndexes.includes(receiverIndex) || givingToEachOther) {
-        receiverIndex = this.randomInteger(0, participants.length - 1);
+      while (receiverIndex === i) {
+        receiverIndex = this.randomIndex(potentialReceivers.length);
       }
 
-      let match: Match = {
-        giver: participants[giverIndex],
-        receiver: participants[receiverIndex]
-      };
-
-      matches.push(match);
-      alreadyReceivedIndexes.push(receiverIndex);
+      matches.push({ giver: participants[i], receiver: potentialReceivers[receiverIndex]});
+      potentialReceivers.splice(receiverIndex, 1);
     }
 
     return matches;
   }
 
-  private randomInteger(min: number, max: number): number {
-      min = Math.floor(0);
-      max = Math.ceil(max);
-      return Math.floor(Math.random() * (max - min + 1)) + min;
+  private complexMatch(participants: Participant[], rules: Rules): Match[] {
+    let matches: Match[] = [];
+    let potentialReceivers = [...participants];
+
+    for (let i = 0; i < participants.length; i++) {
+      let disallowedIndexes: number[] = [];
+      disallowedIndexes.push(i);
+
+      let receiverIndex = this.randomIndex(potentialReceivers.length, disallowedIndexes);
+
+      if (rules.enforceHouseholdRule) {
+        while (participants[i].household === potentialReceivers[receiverIndex].household && disallowedIndexes.length < potentialReceivers.length) {
+          disallowedIndexes.push(receiverIndex);
+          receiverIndex = this.randomIndex(potentialReceivers.length, disallowedIndexes);
+        }
+      }
+
+      if (rules.enforceAgeGroupRule) {
+        //enforce age group rule here
+      }
+
+      if (rules.enforceGenderRule) {
+        if (participants[i].gender !== Gender.other) {
+          while (participants[i].gender === potentialReceivers[receiverIndex].gender && disallowedIndexes.length < potentialReceivers.length) {
+            disallowedIndexes.push(receiverIndex);
+            receiverIndex = this.randomIndex(potentialReceivers.length, disallowedIndexes);
+          }
+        }
+      }
+
+      if (rules.enforceCircularGiftingRule) {
+        const existingReceiverMatch = matches.find(match => match.giver === potentialReceivers[receiverIndex]);
+
+        if (existingReceiverMatch !== undefined && existingReceiverMatch.receiver === participants[i] && disallowedIndexes.length < potentialReceivers.length) {
+          disallowedIndexes.push(receiverIndex);
+          receiverIndex = this.randomIndex(potentialReceivers.length, disallowedIndexes);
+        }
+      }
+
+      if (rules.enforcePreviousYearsRule) {
+        //enforce previous years rule here
+      }
+
+      if (disallowedIndexes.length > potentialReceivers.length) {
+        console.log("Match is impossible with supplied rules");
+        return [];
+      }
+
+      matches.push({ giver: participants[i], receiver: potentialReceivers[receiverIndex]});
+      potentialReceivers.splice(receiverIndex, 1);
+    }
+
+    return matches;
+  }
+
+  private randomIndex(length: number, disallowedIndexes?: number[]): number {
+    length = Math.ceil(length);
+    let random = Math.floor(Math.random() * length);
+    
+    if (disallowedIndexes !== undefined) {
+      while (disallowedIndexes.includes(random)) {
+        random = Math.floor(Math.random() * length)
+      }
+    }
+
+    return random;
   }
 }
