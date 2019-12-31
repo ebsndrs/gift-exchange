@@ -1,0 +1,1 @@
+{"version":3,"sources":["App.css"],"names":[],"mappings":"AAAA,aACI,UACJ,CAEA,sCACI,UACJ,CAEA,eACI,UACJ","file":"main.cefc812a.chunk.css","sourcesContent":[".github-link {\r\n    color: #FFF;\r\n}\r\n\r\n.github-link:focus, .github-link:hover {\r\n    color: #DDD;\r\n}\r\n\r\n.tooltip:hover {\r\n    color: #555555;\r\n}"]}

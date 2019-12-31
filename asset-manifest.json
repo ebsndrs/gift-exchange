@@ -1,25 +1,26 @@
 {
   "files": {
-    "main.css": "/secret-santa/static/css/main.36497136.chunk.css",
-    "main.js": "/secret-santa/static/js/main.b4cadd30.chunk.js",
-    "main.js.map": "/secret-santa/static/js/main.b4cadd30.chunk.js.map",
+    "main.css": "/secret-santa/static/css/main.cefc812a.chunk.css",
+    "main.js": "/secret-santa/static/js/main.29bee5f8.chunk.js",
+    "main.js.map": "/secret-santa/static/js/main.29bee5f8.chunk.js.map",
     "runtime-main.js": "/secret-santa/static/js/runtime-main.d82b7abf.js",
     "runtime-main.js.map": "/secret-santa/static/js/runtime-main.d82b7abf.js.map",
-    "static/css/2.5dabca3a.chunk.css": "/secret-santa/static/css/2.5dabca3a.chunk.css",
-    "static/js/2.75feb6ac.chunk.js": "/secret-santa/static/js/2.75feb6ac.chunk.js",
-    "static/js/2.75feb6ac.chunk.js.map": "/secret-santa/static/js/2.75feb6ac.chunk.js.map",
+    "static/css/2.b20fcfdb.chunk.css": "/secret-santa/static/css/2.b20fcfdb.chunk.css",
+    "static/js/2.148ace44.chunk.js": "/secret-santa/static/js/2.148ace44.chunk.js",
+    "static/js/2.148ace44.chunk.js.map": "/secret-santa/static/js/2.148ace44.chunk.js.map",
     "index.html": "/secret-santa/index.html",
-    "precache-manifest.2aab53add3528c392e6756adc6116cdc.js": "/secret-santa/precache-manifest.2aab53add3528c392e6756adc6116cdc.js",
+    "precache-manifest.14e138167169161f28d8d8e620ba7868.js": "/secret-santa/precache-manifest.14e138167169161f28d8d8e620ba7868.js",
     "service-worker.js": "/secret-santa/service-worker.js",
-    "static/css/2.5dabca3a.chunk.css.map": "/secret-santa/static/css/2.5dabca3a.chunk.css.map",
-    "static/css/main.36497136.chunk.css.map": "/secret-santa/static/css/main.36497136.chunk.css.map",
-    "static/js/2.75feb6ac.chunk.js.LICENSE": "/secret-santa/static/js/2.75feb6ac.chunk.js.LICENSE"
+    "static/css/2.b20fcfdb.chunk.css.map": "/secret-santa/static/css/2.b20fcfdb.chunk.css.map",
+    "static/css/main.cefc812a.chunk.css.map": "/secret-santa/static/css/main.cefc812a.chunk.css.map",
+    "static/js/2.148ace44.chunk.js.LICENSE": "/secret-santa/static/js/2.148ace44.chunk.js.LICENSE",
+    "static/media/all.css": "/secret-santa/static/media/fa-solid-900.f6121be5.woff2"
   },
   "entrypoints": [
     "static/js/runtime-main.d82b7abf.js",
-    "static/css/2.5dabca3a.chunk.css",
-    "static/js/2.75feb6ac.chunk.js",
-    "static/css/main.36497136.chunk.css",
-    "static/js/main.b4cadd30.chunk.js"
+    "static/css/2.b20fcfdb.chunk.css",
+    "static/js/2.148ace44.chunk.js",
+    "static/css/main.cefc812a.chunk.css",
+    "static/js/main.29bee5f8.chunk.js"
   ]
 }
