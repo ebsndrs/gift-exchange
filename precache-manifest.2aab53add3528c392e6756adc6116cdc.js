@@ -1,6 +1,6 @@
 self.__precacheManifest = (self.__precacheManifest || []).concat([
   {
-    "revision": "dc688fd0dc365852f8c2fedd13f743a2",
+    "revision": "1b1299515b5fc5218eda6100310a616f",
     "url": "/secret-santa/index.html"
   },
   {
@@ -8,7 +8,7 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "/secret-santa/static/css/2.5dabca3a.chunk.css"
   },
   {
-    "revision": "2c0398e805114ea3594e",
+    "revision": "ea4137ae3635590fb6e7",
     "url": "/secret-santa/static/css/main.36497136.chunk.css"
   },
   {
@@ -20,8 +20,8 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "/secret-santa/static/js/2.75feb6ac.chunk.js.LICENSE"
   },
   {
-    "revision": "2c0398e805114ea3594e",
-    "url": "/secret-santa/static/js/main.01729a50.chunk.js"
+    "revision": "ea4137ae3635590fb6e7",
+    "url": "/secret-santa/static/js/main.b4cadd30.chunk.js"
   },
   {
     "revision": "4d5b6d00017eff157e06",
