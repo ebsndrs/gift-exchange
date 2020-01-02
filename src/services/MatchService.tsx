@@ -1,7 +1,7 @@
-import { Participant } from "../interfaces/Participant";
-import { Match } from "../interfaces/Match";
-import { Rules } from "../interfaces/Rules";
-import { Gender } from "../interfaces/Gender";
+import { Participant } from "../interfaces/models/Participant";
+import { Match } from "../interfaces/models/Match";
+import { Rules } from "../interfaces/models/Rules";
+import { Gender } from "../interfaces/models/Gender";
 
 export default class MatchService {
   async generateMatches(participants: Participant[], rules: Rules): Promise<Match[]> {
@@ -88,7 +88,7 @@ export default class MatchService {
   private randomIndex(length: number, disallowedIndexes?: number[]): number {
     length = Math.ceil(length);
     let random = Math.floor(Math.random() * length);
-    
+
     if (disallowedIndexes !== undefined) {
       while (disallowedIndexes.includes(random)) {
         random = Math.floor(Math.random() * length)

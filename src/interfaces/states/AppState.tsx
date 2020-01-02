@@ -1,7 +1,7 @@
-import { Participant } from "../Participant";
-import { Match } from "../Match";
-import { PreviousYear } from "../PreviousYear";
-import { Rules } from "../Rules";
+import { Participant } from "../models/Participant";
+import { Match } from "../models/Match";
+import { PreviousYear } from "../models/PreviousYear";
+import { Rules } from "../models/Rules";
 
 export interface AppState {
   participants: Participant[];

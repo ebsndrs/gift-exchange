@@ -3,9 +3,9 @@ import 'bulma';
 import '@fortawesome/fontawesome-free/css/all.css';
 import './App.css';
 import { AppState } from './interfaces/states/AppState';
-import { Participant } from './interfaces/Participant';
-import { Gender } from './interfaces/Gender';
-import Participants from './components/Participants';
+import { Participant } from './interfaces/models/Participant';
+import { Gender } from './interfaces/models/Gender';
+import ParticipantsTable from './components/ParticipantsTable';
 import MatchService from './services/MatchService';
 import Match from './components/Match';
 
@@ -26,70 +26,70 @@ export default class App extends React.Component<any, AppState> {
     const mockParticipants: Participant[] = [
       {
         name: "Person 1",
-        dob: new Date(1930, 8, 11),
+        age: 19,
         gender: Gender.male,
         household: mockHouseholds[0],
         exclusions: undefined
       },
       {
         name: "Person 2",
-        dob: new Date(1950, 9, 27),
+        age:59,
         gender: Gender.male,
         household: mockHouseholds[0],
         exclusions: undefined
       },
       {
         name: "Person 3",
-        dob: new Date(1958, 10, 25),
+        age:14,
         gender: Gender.female,
         household: mockHouseholds[0],
         exclusions: undefined
       },
       {
         name: "Person 4",
-        dob: new Date(1973, 12, 13),
+        age: 25,
         gender: Gender.other,
         household: mockHouseholds[1],
         exclusions: undefined
       },
       {
         name: "Person 5",
-        dob: new  Date(1986, 7, 26),
+        age: 73,
         gender:  Gender.female,
         household: mockHouseholds[2],
         exclusions: undefined
       },
       {
         name: "Person 6",
-        dob: new Date(1987, 3, 11),
+        age: 32,
         gender: Gender.male,
         household: mockHouseholds[1],
         exclusions: undefined
       },
       {
         name: "Person 7",
-        dob: new Date(2001, 1, 19),
+        age: 53,
         gender: Gender.male,
         household: mockHouseholds[1],
         exclusions: undefined
       },
       {
         name: "Person 8",
-        dob: new Date(2005, 11, 23),
+        age: 45,
         gender: Gender.female,
         household: mockHouseholds[0],
         exclusions: undefined
       },
       {
         name: "Person 9",
-        dob: new Date(2011, 3, 31),
+        age: 20,
         gender: Gender.female,
         household: mockHouseholds[1],
         exclusions: undefined
       },
       {
         name: "Person 10",
-        dob: new Date(2016, 10, 1),
+        age: 29,
         gender: Gender.other,
         household: mockHouseholds[0],
         exclusions: undefined
@@ -126,7 +126,7 @@ export default class App extends React.Component<any, AppState> {
               <div className="level-right">
                 <div className="level-item">
                   <span className="icon is-large">
-                    <a href="https://github.com/ebsndrs/secret-santa" target="_blank" className="github-link">
+                    <a href="https://github.com/ebsndrs/secret-santa" className="github-link">
                       <i className="fab fa-2x fa-github"></i>
                     </a>
                   </span>
@@ -135,6 +135,46 @@ export default class App extends React.Component<any, AppState> {
             </nav>
           </div>
         </section>
+        <section className="section" id="participantsSection">
+          <div className="box">
+            <h1 className="title is-4">Participants</h1>
+            <h1 className="subtitle is-6">Add, remove, edit, or import participants</h1>
+
+            <ParticipantsTable participants={this.state.participants} />
+          </div>
+        </section>
+        <footer className="footer">
+          <div className="content has-text-centered">
+            <p><strong>Secret Santa</strong> by <a href="http://ebsndrs.io">Edward Sanders</a></p>
+          </div>
+        </footer>
+        <br />
+        <br />
+        <br />
+        <br />
+        <br />
+        <br />
+        <br />
+        <br />
+        <br />
+        <br />
+        <br />
+        <br />
+        <br />
+        <br />
+        <br />
+        <br />
+        <br />
+        <br />
+        <br />
+        <br />
+        <br />
+        <br />
+        <br />
+        <br />
+        <br />
+        <br />
+        <br />
         <section className="section">
           <div className="columns">
             <div className="column">
@@ -261,13 +301,13 @@ export default class App extends React.Component<any, AppState> {
                     <tr>
                       <td>{participant.name}</td>
                       <td>{participant.household}</td>
-                      <td>{this.getGender(participant.gender)}</td>
+                      {/* <td>{this.getGender(participant.gender)}</td> */}
                     </tr>
                   )
                 }
               </tbody>
             </table>
-            <Participants participants={this.state.participants} />
+            {/* <Participants participants={this.state.participants} /> */}
           </div>
         <button className="button" onClick={this.generateMatches}>Generate Matches</button>
         {this.state.matches.map(item => <Match match={item} />)}
@@ -313,15 +353,5 @@ export default class App extends React.Component<any, AppState> {
     this.setState({
       rules: currentState.rules
     });
-  }
-
-  getGender(enumObj: any): string | undefined {
-    for (let name in Gender) {
-        if ( Gender[name] === enumObj && Gender.hasOwnProperty(name) ) {
-            return name;
-        }
-    }
-
-    return undefined;
   }
 }
