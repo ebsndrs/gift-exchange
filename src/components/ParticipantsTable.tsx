@@ -2,6 +2,7 @@ import React from 'react';
 import { ParticipantsTableProps } from '../interfaces/props/ParticipantsTableProps';
 import ParticipantsTableRow from './ParticipantsTableRow';
 import GenderHelper from '../helpers/GenderHelper';
+import { Participant } from '../interfaces/models/Participant';
 
 export default class ParticipantsTable extends React.Component<ParticipantsTableProps> {
   genderHelper: GenderHelper;
@@ -13,10 +14,17 @@ export default class ParticipantsTable extends React.Component<ParticipantsTable
   }
 
   render(): JSX.Element {
-    const households = this.props.participants.filter(participant => participant !== undefined).map(participant => participant.household) as string[];
-    const distinctHouseholds = Array.from(new Set(households));
+    let households = [...this.props.households];
+    
+    if (households.every(household => household === undefined)) {
+      households = [ "None" ]
+    } else {
+      households.unshift("None");
+    }
 
-    const genders = this.genderHelper.getGendersAsStringArray();
+    const distinctHouseholds = Array.from(new Set(households));
+    
+    let genders = this.genderHelper.getGendersAsStringArray();
 
     return(
       <div>
@@ -32,15 +40,40 @@ export default class ParticipantsTable extends React.Component<ParticipantsTable
           </thead>
           <tbody>
             {this.props.participants.map(participant =>
-              <ParticipantsTableRow participant={participant} households={distinctHouseholds} genders={genders}/>)
+              <ParticipantsTableRow
+                index={this.props.participants.indexOf(participant)}
+                participant={participant}
+                households={distinctHouseholds}
+                genders={genders}
+                handleNameChange={this.handleParticipantNameChange}
+                handleHouseholdChange={this.handleParticipantHouseholdChange}
+              />  
+            )
             }
-            <tr>
-              <td><input className="input is-small" type="text" placeholder="Name" /></td>
-            </tr>
           </tbody>
         </table>
-        <button className="button">Add Participant</button>
+        <button className="button" onClick={this.addParticipant}>Add Participant</button>
       </div>
     );
+  }
+
+  addParticipant = (): void => {
+    let participant: Participant = {
+      name: "",
+      household: undefined,
+      gender: undefined,
+      age: undefined,
+      exclusions: undefined
+    };
+
+    this.props.addParticipant(participant);
+  }
+
+  handleParticipantNameChange = (index: number, newName: string): void => {
+    this.props.handleParticipantNameChange(index, newName);
+  }
+
+  handleParticipantHouseholdChange = (index: number, newHousehold: string): void => {
+    this.props.handleParticipantHouseholdChange(index, newHousehold);
   }
 }

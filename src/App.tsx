@@ -97,7 +97,7 @@ export default class App extends React.Component<any, AppState> {
     ];
 
     this.state = {
-      participants: mockParticipants,
+      participants: [],
       households: mockHouseholds,
       matches: [],
       previousYears: [],
@@ -140,7 +140,13 @@ export default class App extends React.Component<any, AppState> {
             <h1 className="title is-4">Participants</h1>
             <h1 className="subtitle is-6">Add, remove, edit, or import participants</h1>
 
-            <ParticipantsTable participants={this.state.participants} />
+            <ParticipantsTable
+              households={this.state.households}
+              participants={this.state.participants}
+              addParticipant={this.addParticipant}
+              handleParticipantNameChange={this.handleParticipantNameChange}
+              handleParticipantHouseholdChange={this.handleParticipantHouseholdChange}
+            />
           </div>
         </section>
         <footer className="footer">
@@ -313,6 +319,37 @@ export default class App extends React.Component<any, AppState> {
         {this.state.matches.map(item => <Match match={item} />)}
       </div>
     );
+  }
+
+  addParticipant = (participant: Participant): void => {
+    let participants = this.state.participants;
+    participants.push(participant);
+    this.setState({
+      participants: participants
+    });
+  }
+
+  handleParticipantNameChange = (index: number, newName: string): void => {
+    let participants = this.state.participants;
+    participants[index].household = newName;
+    this.setState({
+      participants: participants
+    });
+  }
+
+  handleParticipantHouseholdChange = (index: number, newHousehold: string): void => {
+    let participants = this.state.participants;
+
+    if (newHousehold === "None") {
+      participants[index].household = undefined;
+    } else if (!this.state.households.includes(newHousehold)) {
+      console.error("Household does not exist");
+    } else {
+      participants[index].household = newHousehold;
+      this.setState({
+        participants: participants
+      });
+    }
   }
 
   generateMatches = async (): Promise<void> => {

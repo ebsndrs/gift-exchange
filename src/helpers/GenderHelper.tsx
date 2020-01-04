@@ -3,12 +3,11 @@ import { Gender } from "../interfaces/models/Gender";
 export default class GenderHelper {
   getGendersAsStringArray(): string[] {
     let genderArray: string[] = [];
-    for (let i = 0; i < 3; i++) {
+    for (let i = 0; i < 4; i++) {
       let genderAsString = this.getGenderAsString(i);
       if (genderAsString !== undefined) {
         genderArray.push(genderAsString);
       }
-
     }
 
     return genderArray;

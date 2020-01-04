@@ -16,13 +16,13 @@ export default class ParticipantsTableRow extends React.Component<ParticipantsTa
   render(): JSX.Element {
     return(
       <tr>
-        <td><input className="input is-small" type="text" placeholder="Name" /></td>
+        <td><input className="input is-small" type="text" placeholder="Name" onChange={(value) => this.handleNameChange(this.props.index, value)}/></td>
         <td>
           <div className="select is-small">
-            <select>
+            <select onChange={(value) => this.handleHouseholdChange(this.props.index, value)}>
               {
                 this.props.households.map(household =>
-                  <option>{household}</option>
+                  <option value={household}>{household}</option>
                 )
               }
             </select>
@@ -43,6 +43,14 @@ export default class ParticipantsTableRow extends React.Component<ParticipantsTa
         <td></td>
       </tr>
     );
+  }
+
+  handleNameChange = (index: number, event: React.ChangeEvent<HTMLInputElement>): void => {
+    this.props.handleNameChange(index, event.target.value);
+  }
+
+  handleHouseholdChange = (index: number, event: React.ChangeEvent<HTMLSelectElement>): void => {
+    this.props.handleNameChange(index, event.target.value);
   }
 
   handleAgeInput = (event: React.ChangeEvent<HTMLInputElement>): void => {
