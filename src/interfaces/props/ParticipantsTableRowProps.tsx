@@ -1,4 +1,5 @@
 import { Participant } from "../models/Participant";
+import { Gender } from "../models/Gender";
 
 export interface ParticipantsTableRowProps {
   index: number;
@@ -7,4 +8,5 @@ export interface ParticipantsTableRowProps {
   participant: Participant;
   handleNameChange: (index: number, newName: string) => void;
   handleHouseholdChange: (index: number, newHousehold: string) => void;
+  handleGenderChange: (index: number, newGender: Gender) => void;
 }

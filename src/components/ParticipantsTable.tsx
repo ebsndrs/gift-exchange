@@ -3,6 +3,7 @@ import { ParticipantsTableProps } from '../interfaces/props/ParticipantsTablePro
 import ParticipantsTableRow from './ParticipantsTableRow';
 import GenderHelper from '../helpers/GenderHelper';
 import { Participant } from '../interfaces/models/Participant';
+import { Gender } from '../interfaces/models/Gender';
 
 export default class ParticipantsTable extends React.Component<ParticipantsTableProps> {
   genderHelper: GenderHelper;
@@ -47,6 +48,7 @@ export default class ParticipantsTable extends React.Component<ParticipantsTable
                 genders={genders}
                 handleNameChange={this.handleParticipantNameChange}
                 handleHouseholdChange={this.handleParticipantHouseholdChange}
+                handleGenderChange={this.handleParticipantGenderChange} 
               />  
             )
             }
@@ -75,5 +77,9 @@ export default class ParticipantsTable extends React.Component<ParticipantsTable
 
   handleParticipantHouseholdChange = (index: number, newHousehold: string): void => {
     this.props.handleParticipantHouseholdChange(index, newHousehold);
+  }
+
+  handleParticipantGenderChange = (index:  number, newGender: Gender): void => {
+    this.props.handleParticipantGenderChange(index, newGender);
   }
 }

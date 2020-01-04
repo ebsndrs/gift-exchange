@@ -146,6 +146,7 @@ export default class App extends React.Component<any, AppState> {
               addParticipant={this.addParticipant}
               handleParticipantNameChange={this.handleParticipantNameChange}
               handleParticipantHouseholdChange={this.handleParticipantHouseholdChange}
+              handleParticipantGenderChange={this.handleParticipantGenderChange}
             />
           </div>
         </section>
@@ -350,6 +351,14 @@ export default class App extends React.Component<any, AppState> {
         participants: participants
       });
     }
+  }
+
+  handleParticipantGenderChange = (index: number, newGender: Gender): void => {
+    let participants = this.state.participants;
+    participants[index].gender = newGender;
+    this.setState({
+      participants: participants
+    });
   }
 
   generateMatches = async (): Promise<void> => {
