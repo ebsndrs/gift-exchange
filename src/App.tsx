@@ -1,403 +1,280 @@
-import React from 'react';
-import 'bulma';
-import '@fortawesome/fontawesome-free/css/all.css';
+import { Card, CardContent, CardHeader, Grid, Button } from '@material-ui/core';
+import React, { useState } from 'react';
 import './App.css';
-import { AppState } from './interfaces/states/AppState';
-import { Participant } from './interfaces/models/Participant';
-import { Gender } from './interfaces/models/Gender';
-import ParticipantsTable from './components/ParticipantsTable';
-import MatchService from './services/MatchService';
-import Match from './components/Match';
+import HouseholdsList from './components/HouseholdsList';
+import PeopleList from './components/PeopleList';
+import RulesList from './components/RulesList';
+import Person from './interfaces/Person';
+import AppState from './interfaces/AppState';
+import MatchesList from './components/MatchesList';
+import MaxFlow from './matching/MaxFlow';
 
-export default class App extends React.Component<any, AppState> {
-  matchService: MatchService;
+export default function App() {
+  const genders: string[] = ['None', 'Male', 'Female', 'Other'];
 
-  constructor(props: any) {
-    super(props);
+  const [state, setState] = useState<AppState>({
+    rules: {
+      preventCircularGifting: false,
+      preventSameHousehold: false,
+      preventSameGender: false,
+      preventSameAgeGroup: false
+    },
+    people: [],
+    households: ['None'],
+    matches: []
+  });
 
-    this.matchService = new MatchService();
-
-    const mockHouseholds: string[] = [
-      "Household 1",
-      "Household 2",
-      "Household 3"
-    ];
-
-    const mockParticipants: Participant[] = [
-      {
-        name: "Person 1",
-        age: 19,
-        gender: Gender.male,
-        household: mockHouseholds[0],
-        exclusions: undefined
-      },
-      {
-        name: "Person 2",
-        age:59,
-        gender: Gender.male,
-        household: mockHouseholds[0],
-        exclusions: undefined
-      },
-      {
-        name: "Person 3",
-        age:14,
-        gender: Gender.female,
-        household: mockHouseholds[0],
-        exclusions: undefined
-      },
-      {
-        name: "Person 4",
-        age: 25,
-        gender: Gender.other,
-        household: mockHouseholds[1],
-        exclusions: undefined
-      },
-      {
-        name: "Person 5",
-        age: 73,
-        gender:  Gender.female,
-        household: mockHouseholds[2],
-        exclusions: undefined
-      },
-      {
-        name: "Person 6",
-        age: 32,
-        gender: Gender.male,
-        household: mockHouseholds[1],
-        exclusions: undefined
-      },
-      {
-        name: "Person 7",
-        age: 53,
-        gender: Gender.male,
-        household: mockHouseholds[1],
-        exclusions: undefined
-      },
-      {
-        name: "Person 8",
-        age: 45,
-        gender: Gender.female,
-        household: mockHouseholds[0],
-        exclusions: undefined
-      },
-      {
-        name: "Person 9",
-        age: 20,
-        gender: Gender.female,
-        household: mockHouseholds[1],
-        exclusions: undefined
-      },
-      {
-        name: "Person 10",
-        age: 29,
-        gender: Gender.other,
-        household: mockHouseholds[0],
-        exclusions: undefined
+  const changeRule = (name: string, value: boolean) => {
+    setState({ ...state,
+      rules: { ...state.rules,
+        [name]: value
       }
-    ];
-
-    this.state = {
-      participants: [],
-      households: mockHouseholds,
-      matches: [],
-      previousYears: [],
-      rules: {
-        enforceHouseholdRule: false,
-        enforceAgeGroupRule: false,
-        enforceGenderRule: false,
-        enforceCircularGiftingRule: false,
-        enforcePreviousYearsRule: false,
-        previousYearsToEnforce: 3
-      }
-    };
-  }
-
-  render(): JSX.Element {
-    return(
-      <div className="App">
-        <section className="hero is-dark">
-          <div className="hero-body">
-            <nav className="level">
-              <div className="level-left">
-                <div className="level-item">
-                  <h1 className="title">Secret Santa</h1>
-                </div>
-              </div>
-              <div className="level-right">
-                <div className="level-item">
-                  <span className="icon is-large">
-                    <a href="https://github.com/ebsndrs/secret-santa" className="github-link">
-                      <i className="fab fa-2x fa-github"></i>
-                    </a>
-                  </span>
-                </div>
-              </div>
-            </nav>
-          </div>
-        </section>
-        <section className="section" id="participantsSection">
-          <div className="box">
-            <h1 className="title is-4">Participants</h1>
-            <h1 className="subtitle is-6">Add, remove, edit, or import participants</h1>
-
-            <ParticipantsTable
-              households={this.state.households}
-              participants={this.state.participants}
-              addParticipant={this.addParticipant}
-              handleParticipantNameChange={this.handleParticipantNameChange}
-              handleParticipantHouseholdChange={this.handleParticipantHouseholdChange}
-              handleParticipantGenderChange={this.handleParticipantGenderChange}
-            />
-          </div>
-        </section>
-        <footer className="footer">
-          <div className="content has-text-centered">
-            <p><strong>Secret Santa</strong> by <a href="http://ebsndrs.io">Edward Sanders</a></p>
-          </div>
-        </footer>
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <section className="section">
-          <div className="columns">
-            <div className="column">
-              <div className="panel">
-                <p className="panel-heading">Rules</p>
-                <div className="panel-block">
-                  <div className="container">
-                    <div className="level">
-                      <div className="level-left">
-                        <div className="level-item">
-                          <h5 className="title is-5">Prevent Household Matches <sup className="tooltip"><span title="This rule prevents matches from occuring within the same household. Enabling ensures givers will only give to those outside of their household." className="icon is-small"><i className="far fa-question-circle"></i></span></sup></h5>
-                        </div>
-                      </div>
-                      <div className="level-right">
-                        <div className="level-item">
-                          <button className="button is-white is-rounded" onClick={this.toggleHouseholdRule}>
-                            <span className="icon is-medium">
-                              <i className={this.state.rules.enforceHouseholdRule ? "far fa-2x fa-check-circle has-text-success" : "far fa-2x fa-times-circle has-text-danger"}></i>
-                            </span>
-                          </button>
-                        </div>
-                      </div>
-                    </div>
-                    <div className="level">
-                      <div className="level-left">
-                        <div className="level-item">
-                          <div className="content">
-                            <h5 className="title is-5">Prevent Circular Matches <sup className="tooltip"><span title="This rule prevents participants from having a circular gift exchange, where a giver and receiver are giving and receiver from each other. Enabling this rule ensures nobody will give to the person from which they receive, and vice versa." className="icon is-small"><i className="far fa-question-circle"></i></span></sup></h5>
-                          </div>
-                        </div>
-                      </div>
-                      <div className="level-right">
-                        <div className="level-item">
-                          <button className="button is-white is-rounded" onClick={this.toggleCircularGiftingRule}>
-                            <span className="icon is-medium">
-                              <i className={this.state.rules.enforceCircularGiftingRule ? "far fa-2x fa-check-circle has-text-success" : "far fa-2x fa-times-circle has-text-danger"}></i>
-                            </span>
-                          </button>
-                        </div>
-                      </div>
-                    </div>
-                    <div className="level">
-                      <div className="level-left">
-                        <div className="level-item">
-                          <h5 className="title is-5">Prevent Same Gender Matches <sup className="tooltip"><span title="This rule prevents matches from occuring between genders. This only prevents those with their gender defined as male or female from giving to each other; those with the 'other' gender are not affected" className="icon is-small"><i className="far fa-question-circle"></i></span></sup></h5>
-                        </div>
-                      </div>
-                      <div className="level-right">
-                        <div className="level-item">
-                          <button className="button is-white is-rounded" onClick={this.toggleGenderRule}>
-                            <span className="icon is-medium">
-                              <i className={this.state.rules.enforceGenderRule ? "far fa-2x fa-check-circle has-text-success" : "far fa-2x fa-times-circle has-text-danger"}></i>
-                            </span>
-                          </button>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div className="column">
-              <div className="panel">
-                <p className="panel-heading">Participants</p>
-                <div className="panel-block">
-
-                </div>
-              </div>
-            </div>
-            <div className="column">
-              <div className="panel">
-                <p className="panel-heading">Matches</p>
-                <div className="panel-block">
-
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-          <div>
-            <h1 className="title">Rules</h1>
-            <div className="field">
-              <label className="checkbox">
-                <input type="checkbox" checked={this.state.rules.enforceHouseholdRule} onClick={this.toggleHouseholdRule} />
-                Household Rule
-              </label>
-            </div>
-            <div className="field">
-              <label className="checkbox">
-                <input type="checkbox" checked={this.state.rules.enforceCircularGiftingRule} onClick={this.toggleCircularGiftingRule} />
-                Circular Gifting Rule
-              </label>
-            </div>
-            <div className="field">
-              <label className="checkbox">
-                <input type="checkbox" checked={this.state.rules.enforceGenderRule} onClick={this.toggleGenderRule} />
-                Gender Rule
-              </label>
-            </div>
-            {/* <div className="field">
-              <label className="checkbox">
-                <input type="checkbox" checked={this.state.rules.enforcePreviousYearsRule} onClick={this.togglePreviousYearsRule} />
-                Previous Years Rule
-              </label>
-            </div> */}
-          </div>
-          <div>
-            <h2 className="title">Households</h2>
-            {this.state.households.map(item => <p>{item}</p>)}
-          </div>
-          <div>
-            <h2 className="title">Participants</h2>
-            <table className="table">
-              <thead>
-                <tr>
-                  <th>Name</th>
-                  <th>Household</th>
-                  <th>Gender</th>
-                </tr>
-              </thead>
-              <tbody>
-                {
-                  this.state.participants.map(participant =>
-                    <tr>
-                      <td>{participant.name}</td>
-                      <td>{participant.household}</td>
-                      {/* <td>{this.getGender(participant.gender)}</td> */}
-                    </tr>
-                  )
-                }
-              </tbody>
-            </table>
-            {/* <Participants participants={this.state.participants} /> */}
-          </div>
-        <button className="button" onClick={this.generateMatches}>Generate Matches</button>
-        {this.state.matches.map(item => <Match match={item} />)}
-      </div>
-    );
-  }
-
-  addParticipant = (participant: Participant): void => {
-    let participants = this.state.participants;
-    participants.push(participant);
-    this.setState({
-      participants: participants
     });
   }
 
-  handleParticipantNameChange = (index: number, newName: string): void => {
-    let participants = this.state.participants;
-    participants[index].household = newName;
-    this.setState({
-      participants: participants
-    });
-  }
+  const addPerson = (person: Person) => {
+    person.name.trim();
+    person.household?.trim();
+    person.gender?.trim();
 
-  handleParticipantHouseholdChange = (index: number, newHousehold: string): void => {
-    let participants = this.state.participants;
+    const isValid = person.name !== undefined && person.name !== '' && !state.people.some(p => p.name === person.name)
 
-    if (newHousehold === "None") {
-      participants[index].household = undefined;
-    } else if (!this.state.households.includes(newHousehold)) {
-      console.error("Household does not exist");
-    } else {
-      participants[index].household = newHousehold;
-      this.setState({
-        participants: participants
+    if (isValid) {
+      setState({
+        ...state,
+        people: [
+          ...state.people,
+          person
+        ]
       });
     }
   }
 
-  handleParticipantGenderChange = (index: number, newGender: Gender): void => {
-    let participants = this.state.participants;
-    participants[index].gender = newGender;
-    this.setState({
-      participants: participants
-    });
+  const removePerson = (name: string) => {
+    const index = state.people.findIndex(p => p.name === name);
+
+    if (state.people[index] !== undefined) {
+      state.people.splice(index, 1);
+      setState({
+        ...state,
+        people: [...state.people]
+      });
+    }
   }
 
-  generateMatches = async (): Promise<void> => {
-    let matches = await this.matchService.generateMatches(this.state.participants, this.state.rules);
+  const addHousehold = (household: string) => {
+    household.trim();
 
-    this.setState({
-      matches: matches
-    });
+    const isValid = household !== undefined && household !== '' && !state.households.includes(household);
+
+    if (isValid) {
+      setState({
+        ...state,
+        households: [
+          ...state.households,
+          household
+        ]
+      });
+    }
   }
 
-  toggleHouseholdRule  = (): void => {
-    const currentState = this.state;
-    currentState.rules.enforceHouseholdRule = !currentState.rules.enforceHouseholdRule;
-    this.setState({
-      rules: currentState.rules
-    });
+  const removeHousehold = (household: string) => {
+    const index = state.households.findIndex(h => h === household);
+
+    if (index !== 0 && state.households[index] !== undefined) {
+      const peopleWithHousehold = state.people.filter(p => p.household === state.households[index]);
+
+      peopleWithHousehold.forEach(person => {
+        person.household = state.households[0];
+      });
+
+      state.households.splice(index, 1);
+
+      setState({
+        ...state,
+        people: [...state.people],
+        households: [...state.households]
+      });
+    }
   }
 
-  toggleCircularGiftingRule = (): void => {
-    const currentState = this.state;
-    currentState.rules.enforceCircularGiftingRule = !currentState.rules.enforceCircularGiftingRule;
-    this.setState({
-      rules: currentState.rules
-    });
+  const generateMatches = () => {
+
   }
 
-  toggleGenderRule = (): void => {
-    const currentState = this.state;
-    currentState.rules.enforceGenderRule = !currentState.rules.enforceGenderRule;
-    this.setState({
-      rules: currentState.rules
-    });
+  const getMaxFlow = () => {
+    let graph: number[][] = [
+      [0, 16, 13, 0, 0, 0],
+      [0, 0, 10, 12, 0, 0],
+      [0, 4, 0, 0, 14, 0],
+      [0, 0, 9, 0, 0, 20],
+      [0, 0, 0, 7, 0, 4],
+      [0, 0, 0, 0, 0, 0]
+    ];
+
+    console.log(`The maximum possible flow is ${MaxFlow(graph, 6)}`)
   }
 
-  togglePreviousYearsRule = (): void => {
-    const currentState = this.state;
-    currentState.rules.enforcePreviousYearsRule = !currentState.rules.enforcePreviousYearsRule;
-    this.setState({
-      rules: currentState.rules
-    });
-  }
+  // const generateMatches = () => {
+  //   setGeneratingMatches(true);
+
+  //   if (people.length < 2) {
+  //     setMatches({
+  //       items: [],
+  //       error: true,
+  //       message: 'You don\'t have enough people to generate matches.'
+  //     });
+  //     return;
+  //   }
+
+  //   let oldMatches = matches.items;
+  //   let newMatches = GenerateMatches(rules, people);
+
+  //   if (!newMatches.error && newMatches.items.length > 2) {
+  //     while (areMatchArraysSame(oldMatches, newMatches.items)) {
+  //       newMatches = GenerateMatches(rules, people);
+  //     }
+  //   }
+
+  //   setMatches(newMatches);
+
+  //   setGeneratingMatches(false);
+  //   // let oldMatches: Match[] | undefined;
+
+  //   // if (matches !== undefined) {
+  //   //   oldMatches = [...matches];
+  //   // } else {
+  //   //   oldMatches = [];
+  //   // }
+  //   // let newMatches: Match[] | undefined = GenerateMatches(rules, people);
+
+  //   // if (newMatches !== undefined) {
+  //   //   if (newMatches.length > 2) {
+  //   //     while (areMatchArraysSame(oldMatches, newMatches!)) {
+  //   //       newMatches = GenerateMatches(rules, people);
+  //   //     }
+  //   //   }
+
+  //   //   console.log(newMatches);
+  //   //   setMatches(newMatches);
+  //   // }
+
+  //   // setGeneratingMatches(false);
+  // }
+
+
+  // const areMatchArraysSame = (oldMatches: Match[], newMatches: Match[]): boolean => {
+  //   if (oldMatches.length !== newMatches.length) {
+  //     return false;
+  //   }
+
+  //   for (let i = 0; i < oldMatches.length; i++) {
+  //     if (oldMatches[i].giver.name === newMatches[i].giver.name && oldMatches[i].receiver.name !== newMatches[i].receiver.name) {
+  //       return false;
+  //     }
+  //   }
+
+  //   return true;
+  // }
+
+  // useEffect(generateMatches, [people, households, rules]);
+
+  // const sampleHouseholds = () => {
+  //   setHouseholds([
+  //     ...households,
+  //     'Sanders',
+  //     'Vitale',
+  //     'Bracy',
+  //     'Marcus'
+  //   ]);
+  // }
+
+  // const samplePeople = () => {
+  //   setPeople([
+  //     {
+  //       name: 'Edward',
+  //       household: households[1],
+  //       gender: 'Male',
+  //       age: 0
+  //     },
+  //     {
+  //       name: 'Heater',
+  //       household: households[1],
+  //       gender: 'Female',
+  //       age: 0
+  //     },
+  //     {
+  //       name: 'Jim',
+  //       household: households[2],
+  //       gender: 'Male',
+  //       age: 0
+  //     },
+  //     {
+  //       name: 'Isabel',
+  //       household: households[2],
+  //       gender: 'Female',
+  //       age: 0
+  //     },
+  //     {
+  //       name: 'Mary',
+  //       household: households[3],
+  //       gender: 'Female',
+  //       age: 0
+  //     },
+  //     {
+  //       name: 'Michael',
+  //       household: households[3],
+  //       gender: 'Male',
+  //       age: 0
+  //     },
+  //     {
+  //       name: 'Shane',
+  //       household: households[4],
+  //       gender: 'Male',
+  //       age: 0
+  //     },
+  //     {
+  //       name: 'Clara',
+  //       household: households[4],
+  //       gender: 'Male',
+  //       age: 0
+  //     }
+  //   ]);
+  // }
+
+  return (
+    <div className="app">
+      <Grid container spacing={3}>
+        <Grid item xs={12} md={3}>
+          <Card>
+            <Button onClick={getMaxFlow}>Test Max Flow</Button>
+            <CardHeader title="Setup" />
+            <CardContent>
+              <RulesList
+                rules={state.rules}
+                changeRule={changeRule}
+              />
+              <HouseholdsList
+                households={state.households}
+                addHousehold={addHousehold}
+                removeHousehold={removeHousehold}
+              />
+            </CardContent>
+          </Card>
+        </Grid>
+        <Grid item xs={12} md={6}>
+          <PeopleList
+            people={state.people}
+            households={state.households}
+            genders={genders}
+            addPerson={addPerson}
+            removePerson={(name: string) => removePerson(name)}
+          />
+        </Grid>
+        <Grid item xs={12} md={3}>
+          <MatchesList matches={state.matches} />
+        </Grid>
+      </Grid>
+    </div>
+  )
 }
