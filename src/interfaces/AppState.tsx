@@ -7,4 +7,7 @@ export default interface AppState {
   people: Person[];
   households: string[];
   matches: Match[];
+  areMatchesGenerating: boolean;
+  areMatchesValid: boolean;
+  matchesMessage: string;
 }

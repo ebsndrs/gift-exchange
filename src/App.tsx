@@ -1,5 +1,5 @@
 import { Card, CardContent, CardHeader, Grid, Button } from '@material-ui/core';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './App.css';
 import HouseholdsList from './components/HouseholdsList';
 import PeopleList from './components/PeopleList';
@@ -7,10 +7,11 @@ import RulesList from './components/RulesList';
 import Person from './interfaces/Person';
 import AppState from './interfaces/AppState';
 import MatchesList from './components/MatchesList';
-import MaxFlow from './matching/MaxFlow';
+import MatchHelper from './matching/MatchHelper';
 
 export default function App() {
   const genders: string[] = ['None', 'Male', 'Female', 'Other'];
+  const matchHelper = new MatchHelper(genders);
 
   const [state, setState] = useState<AppState>({
     rules: {
@@ -21,12 +22,17 @@ export default function App() {
     },
     people: [],
     households: ['None'],
-    matches: []
+    matches: [],
+    areMatchesGenerating: false,
+    areMatchesValid: false,
+    matchesMessage: ''
   });
 
   const changeRule = (name: string, value: boolean) => {
-    setState({ ...state,
-      rules: { ...state.rules,
+    setState({
+      ...state,
+      rules: {
+        ...state.rules,
         [name]: value
       }
     });
@@ -98,156 +104,94 @@ export default function App() {
     }
   }
 
+  const fillTestData = () => {
+    setState({
+      ...state,
+      households: [...state.households, 'Household 1'],
+      people: [
+        {
+          name: 'Test 1',
+          household: 'Household 1',
+          gender: genders[0],
+          age: 0
+        },
+        {
+          name: 'Test 2',
+          household: 'None',
+          gender: genders[0],
+          age: 0
+        },
+        {
+          name: 'Test 3',
+          household: 'Household 1',
+          gender: genders[0],
+          age: 0
+        },
+        {
+          name: 'Test 4',
+          household: 'None',
+          gender: genders[0],
+          age: 0
+        }
+      ]
+    });
+  }
+
   const generateMatches = () => {
+    if (state.people.length < 2) {
+      setState({
+        ...state,
+        areMatchesValid: false,
+        matchesMessage: 'Add 2 or more people to start matching.'
+      })
+    } else {
+      setState({
+        ...state,
+        areMatchesGenerating: true
+      });
 
+
+      let shuffledPeople = matchHelper.shufflePeople(state.people);
+      let adjacencyMatrix = matchHelper.buildAdjacencyMatrix(shuffledPeople, state.households, state.rules);
+      let maxMatches = matchHelper.maximumBipartiteMatching(adjacencyMatrix, state.people.length, state.people.length);
+
+      if (maxMatches === state.people.length) {
+        let matches = matchHelper.generateMatches(shuffledPeople, adjacencyMatrix)
+
+        while (!matchHelper.areMatchesValid(state.people.length, matches, state.households, state.rules)) {
+          shuffledPeople = matchHelper.shufflePeople(state.people);
+          adjacencyMatrix = matchHelper.buildAdjacencyMatrix(shuffledPeople, state.households, state.rules);
+          matches = matchHelper.generateMatches(shuffledPeople, adjacencyMatrix);
+        }
+
+        matches.sort((firstMatch, secondMatch) => firstMatch.gifter.name.localeCompare(secondMatch.gifter.name));
+        setState({
+          ...state,
+          matches: matches,
+          areMatchesGenerating: false,
+          areMatchesValid: true
+        });
+      } else {
+        setState({
+          ...state,
+          matches: [],
+          areMatchesGenerating: false,
+          areMatchesValid: false,
+          matchesMessage: 'No matches could be made with your current settings. Try changing something.'
+        });
+      }
+    }
   }
 
-  const getMaxFlow = () => {
-    let graph: number[][] = [
-      [0, 16, 13, 0, 0, 0],
-      [0, 0, 10, 12, 0, 0],
-      [0, 4, 0, 0, 14, 0],
-      [0, 0, 9, 0, 0, 20],
-      [0, 0, 0, 7, 0, 4],
-      [0, 0, 0, 0, 0, 0]
-    ];
-
-    console.log(`The maximum possible flow is ${MaxFlow(graph, 6)}`)
-  }
-
-  // const generateMatches = () => {
-  //   setGeneratingMatches(true);
-
-  //   if (people.length < 2) {
-  //     setMatches({
-  //       items: [],
-  //       error: true,
-  //       message: 'You don\'t have enough people to generate matches.'
-  //     });
-  //     return;
-  //   }
-
-  //   let oldMatches = matches.items;
-  //   let newMatches = GenerateMatches(rules, people);
-
-  //   if (!newMatches.error && newMatches.items.length > 2) {
-  //     while (areMatchArraysSame(oldMatches, newMatches.items)) {
-  //       newMatches = GenerateMatches(rules, people);
-  //     }
-  //   }
-
-  //   setMatches(newMatches);
-
-  //   setGeneratingMatches(false);
-  //   // let oldMatches: Match[] | undefined;
-
-  //   // if (matches !== undefined) {
-  //   //   oldMatches = [...matches];
-  //   // } else {
-  //   //   oldMatches = [];
-  //   // }
-  //   // let newMatches: Match[] | undefined = GenerateMatches(rules, people);
-
-  //   // if (newMatches !== undefined) {
-  //   //   if (newMatches.length > 2) {
-  //   //     while (areMatchArraysSame(oldMatches, newMatches!)) {
-  //   //       newMatches = GenerateMatches(rules, people);
-  //   //     }
-  //   //   }
-
-  //   //   console.log(newMatches);
-  //   //   setMatches(newMatches);
-  //   // }
-
-  //   // setGeneratingMatches(false);
-  // }
-
-
-  // const areMatchArraysSame = (oldMatches: Match[], newMatches: Match[]): boolean => {
-  //   if (oldMatches.length !== newMatches.length) {
-  //     return false;
-  //   }
-
-  //   for (let i = 0; i < oldMatches.length; i++) {
-  //     if (oldMatches[i].giver.name === newMatches[i].giver.name && oldMatches[i].receiver.name !== newMatches[i].receiver.name) {
-  //       return false;
-  //     }
-  //   }
-
-  //   return true;
-  // }
-
-  // useEffect(generateMatches, [people, households, rules]);
-
-  // const sampleHouseholds = () => {
-  //   setHouseholds([
-  //     ...households,
-  //     'Sanders',
-  //     'Vitale',
-  //     'Bracy',
-  //     'Marcus'
-  //   ]);
-  // }
-
-  // const samplePeople = () => {
-  //   setPeople([
-  //     {
-  //       name: 'Edward',
-  //       household: households[1],
-  //       gender: 'Male',
-  //       age: 0
-  //     },
-  //     {
-  //       name: 'Heater',
-  //       household: households[1],
-  //       gender: 'Female',
-  //       age: 0
-  //     },
-  //     {
-  //       name: 'Jim',
-  //       household: households[2],
-  //       gender: 'Male',
-  //       age: 0
-  //     },
-  //     {
-  //       name: 'Isabel',
-  //       household: households[2],
-  //       gender: 'Female',
-  //       age: 0
-  //     },
-  //     {
-  //       name: 'Mary',
-  //       household: households[3],
-  //       gender: 'Female',
-  //       age: 0
-  //     },
-  //     {
-  //       name: 'Michael',
-  //       household: households[3],
-  //       gender: 'Male',
-  //       age: 0
-  //     },
-  //     {
-  //       name: 'Shane',
-  //       household: households[4],
-  //       gender: 'Male',
-  //       age: 0
-  //     },
-  //     {
-  //       name: 'Clara',
-  //       household: households[4],
-  //       gender: 'Male',
-  //       age: 0
-  //     }
-  //   ]);
-  // }
+  useEffect(generateMatches, [state.people, state.households, state.rules]);
 
   return (
     <div className="app">
       <Grid container spacing={3}>
         <Grid item xs={12} md={3}>
           <Card>
-            <Button onClick={getMaxFlow}>Test Max Flow</Button>
+            <Button onClick={fillTestData}>Test Data</Button>
+            <Button onClick={generateMatches}>Generate matches</Button>
             <CardHeader title="Setup" />
             <CardContent>
               <RulesList
@@ -272,7 +216,12 @@ export default function App() {
           />
         </Grid>
         <Grid item xs={12} md={3}>
-          <MatchesList matches={state.matches} />
+          <MatchesList
+            matches={state.matches}
+            areMatchesGenerating={state.areMatchesGenerating}
+            areMatchesValid={state.areMatchesValid}
+            matchesMessage={state.matchesMessage}
+          />
         </Grid>
       </Grid>
     </div>
