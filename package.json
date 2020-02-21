@@ -1,6 +1,6 @@
 {
-  "homepage": "http://ebsndrs.github.io/secret-santa",
-  "name": "secret-santa",
+  "homepage": "http://ebsndrs.github.io/gift-exchange",
+  "name": "gift-exchange",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
