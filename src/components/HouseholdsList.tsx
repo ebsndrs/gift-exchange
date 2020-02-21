@@ -45,8 +45,6 @@ export default function HouseholdsList(props: HouseholdsListProps) {
             onChange={(event) => onHouseholdInputChange(event)}
             onKeyUp={(event) => onHouseholdInputKeyPress(event)}
             value={householdInput}
-          // error={households.includes(householdInput)}
-          // helperText={households.includes(householdInput) ? "That household already exists" : ""}
           />
         </ListItemText>
         <ListItemSecondaryAction>
