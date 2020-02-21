@@ -5,4 +5,5 @@ export default interface MatchesListProps {
   areMatchesGenerating: boolean;
   areMatchesValid: boolean;
   matchesMessage: string;
+  regenerateMatches: () => void;
 }

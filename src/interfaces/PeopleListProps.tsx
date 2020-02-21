@@ -5,5 +5,6 @@ export default interface PeopleListProps {
   households: string[],
   genders: string[],
   addPerson: (person: Person) => void,
-  removePerson: (name: string) => void
+  removePerson: (name: string) => void,
+  resetPeople: () => void
 }

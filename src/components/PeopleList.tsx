@@ -1,7 +1,8 @@
-import { Button, Card, CardContent, CardHeader, FormControl, InputLabel, MenuItem, Select, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField } from "@material-ui/core";
+import { Button, Card, CardContent, CardHeader, FormControl, IconButton, InputLabel, MenuItem, Select, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField } from "@material-ui/core";
+import ClearIcon from '@material-ui/icons/Clear';
 import React, { useState } from "react";
-import Person from "../interfaces/Person";
 import PeopleListProps from "../interfaces/PeopleListProps";
+import Person from "../interfaces/Person";
 
 export default function PeopleList(props: PeopleListProps) {
   const [personInput, setPersonInput] = useState<Person>({
@@ -78,7 +79,14 @@ export default function PeopleList(props: PeopleListProps) {
 
   return (
     <Card>
-      <CardHeader title="People" />
+      <CardHeader
+        title="People"
+        action={
+          <IconButton>
+            <ClearIcon onClick={props.resetPeople} />
+          </IconButton>
+        }
+      />
       <CardContent>
         <TableContainer>
           <Table>

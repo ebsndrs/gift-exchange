@@ -1,11 +1,19 @@
-import { Box, Card, CardHeader, CircularProgress, Container, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from '@material-ui/core';
+import { Box, Card, CardHeader, CircularProgress, IconButton, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from '@material-ui/core';
+import RefreshIcon from '@material-ui/icons/Refresh';
 import React from 'react';
 import MatchesListProps from '../interfaces/MatchesListProps';
 
 export default function MatchesList(props: MatchesListProps) {
   return (
     <Card>
-      <CardHeader title="Matches" />
+      <CardHeader
+        title="Matches"
+        action={
+          <IconButton>
+            <RefreshIcon onClick={props.regenerateMatches}/>
+          </IconButton>
+        }
+      />
       {props.areMatchesGenerating ?
         (
           <Box justifyContent="center">
