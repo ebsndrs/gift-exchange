@@ -1,22 +1,22 @@
 {
   "files": {
     "main.css": "/gift-exchange/static/css/main.deb5d4a0.chunk.css",
-    "main.js": "/gift-exchange/static/js/main.7d206c69.chunk.js",
-    "main.js.map": "/gift-exchange/static/js/main.7d206c69.chunk.js.map",
+    "main.js": "/gift-exchange/static/js/main.97bdd3b3.chunk.js",
+    "main.js.map": "/gift-exchange/static/js/main.97bdd3b3.chunk.js.map",
     "runtime-main.js": "/gift-exchange/static/js/runtime-main.5ba909a6.js",
     "runtime-main.js.map": "/gift-exchange/static/js/runtime-main.5ba909a6.js.map",
-    "static/js/2.25caab0e.chunk.js": "/gift-exchange/static/js/2.25caab0e.chunk.js",
-    "static/js/2.25caab0e.chunk.js.map": "/gift-exchange/static/js/2.25caab0e.chunk.js.map",
+    "static/js/2.3301fba0.chunk.js": "/gift-exchange/static/js/2.3301fba0.chunk.js",
+    "static/js/2.3301fba0.chunk.js.map": "/gift-exchange/static/js/2.3301fba0.chunk.js.map",
     "index.html": "/gift-exchange/index.html",
-    "precache-manifest.22ae848e829e03a7a199b3a34bc67da2.js": "/gift-exchange/precache-manifest.22ae848e829e03a7a199b3a34bc67da2.js",
+    "precache-manifest.d75d159546c94db2079c9ec9036b044f.js": "/gift-exchange/precache-manifest.d75d159546c94db2079c9ec9036b044f.js",
     "service-worker.js": "/gift-exchange/service-worker.js",
     "static/css/main.deb5d4a0.chunk.css.map": "/gift-exchange/static/css/main.deb5d4a0.chunk.css.map",
-    "static/js/2.25caab0e.chunk.js.LICENSE": "/gift-exchange/static/js/2.25caab0e.chunk.js.LICENSE"
+    "static/js/2.3301fba0.chunk.js.LICENSE": "/gift-exchange/static/js/2.3301fba0.chunk.js.LICENSE"
   },
   "entrypoints": [
     "static/js/runtime-main.5ba909a6.js",
-    "static/js/2.25caab0e.chunk.js",
+    "static/js/2.3301fba0.chunk.js",
     "static/css/main.deb5d4a0.chunk.css",
-    "static/js/main.7d206c69.chunk.js"
+    "static/js/main.97bdd3b3.chunk.js"
   ]
 }
