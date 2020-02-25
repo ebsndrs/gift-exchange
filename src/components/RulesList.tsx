@@ -9,7 +9,7 @@ import RulesListProps from '../interfaces/RulesListProps';
 export default function RulesList(props: RulesListProps) {
   return (
     <List subheader={<ListSubheader>Rules</ListSubheader>}>
-      <ListItem>
+      {/* <ListItem>
         <ListItemIcon>
           <SyncIcon />
         </ListItemIcon>
@@ -21,7 +21,7 @@ export default function RulesList(props: RulesListProps) {
             checked={props.rules.preventCircularGifting}
           />
         </ListItemSecondaryAction>
-      </ListItem>
+      </ListItem> */}
       <ListItem>
         <ListItemIcon>
           <HouseIcon />
@@ -48,7 +48,7 @@ export default function RulesList(props: RulesListProps) {
           />
         </ListItemSecondaryAction>
       </ListItem>
-      <ListItem>
+      {/* <ListItem>
         <ListItemIcon>
           <DateRangeIcon />
         </ListItemIcon>
@@ -60,7 +60,7 @@ export default function RulesList(props: RulesListProps) {
             checked={props.rules.preventSameAgeGroup}
           />
         </ListItemSecondaryAction>
-      </ListItem>
+      </ListItem> */}
     </List>
   );
 }
