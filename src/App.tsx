@@ -5,7 +5,6 @@ import RulesList from "./components/Rules";
 import MatchesList from "./components/Matches";
 import { Rules, Person, Match } from "./types";
 import MatchHelper, { generatePermutation } from "./matching";
-import { Grid, Card, CardHeader, CardContent } from "@material-ui/core";
 
 export default function App() {
   const genders = ["None", "Male", "Female", "Other"];
@@ -160,7 +159,7 @@ export default function App() {
 
   return (
     <div className="app">
-      <Grid container spacing={3}>
+      {/* <Grid container spacing={3}>
         <Grid item xs={12} md={3}>
           <Card>
             <CardHeader title="Setup" />
@@ -193,7 +192,7 @@ export default function App() {
             regenerateMatches={generateMatches}
           />
         </Grid>
-      </Grid>
+      </Grid> */}
     </div>
   );
 }

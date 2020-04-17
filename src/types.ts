@@ -9,7 +9,7 @@ export interface Rules {
 export interface Person {
   name: string;
   age: number;
-  gender: "None" | "Male" | "Female" | "Other";
+  gender: 'None' | 'Male' | 'Female' | 'Other';
   household: string | undefined;
 }
 

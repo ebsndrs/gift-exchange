@@ -1,4 +1,4 @@
-import { Person, Match, Rules } from "./types";
+import { Person, Match, Rules } from './types';
 
 export function generatePermutation(people: Person[], permutation: number) {
   let peopleCopy = [...people]; // copy of the set
@@ -40,7 +40,10 @@ export default class MatchHelper {
     this.genders = genders;
   }
 
-  generateMatches(people: Person[] | undefined, adjacencyMatrix: number[][]): Match[] {
+  generateMatches(
+    people: Person[] | undefined,
+    adjacencyMatrix: number[][]
+  ): Match[] {
     let matches: Match[] = [];
 
     if (people === undefined) {

@@ -1,14 +1,4 @@
-import {
-  Button,
-  List,
-  ListItem,
-  ListItemIcon,
-  ListItemSecondaryAction,
-  ListItemText,
-  ListSubheader,
-  TextField,
-} from "@material-ui/core";
-import HouseIcon from "@material-ui/icons/House";
+
 import React, { useState } from "react";
 import { HouseholdsProps } from "../types";
 
@@ -52,47 +42,48 @@ export default function Households(props: HouseholdsProps) {
   };
 
   return (
-    <List subheader={<ListSubheader>Households</ListSubheader>}>
-      <ListItem>
-        <ListItemText>
-          <TextField
-            label="Add Household"
-            onChange={(event) => onHouseholdInputChange(event)}
-            onKeyUp={(event) => onHouseholdInputKeyPress(event)}
-            value={householdInput}
-          />
-        </ListItemText>
-        <ListItemSecondaryAction>
-          <Button
-            disabled={isAddButtonDisabled}
-            variant="contained"
-            color="primary"
-            onClick={onAddButtonClicked}
-          >
-            Add
-          </Button>
-        </ListItemSecondaryAction>
-      </ListItem>
-      {props.households
-        .filter((household) => household !== props.households[0])
-        .map((household) => (
-          <ListItem key={household}>
-            <ListItemIcon>
-              <HouseIcon />
-            </ListItemIcon>
-            <ListItemText primary={household} />
-            <ListItemSecondaryAction>
-              <Button
-                fullWidth
-                variant="contained"
-                color="secondary"
-                onClick={() => props.removeHousehold(household)}
-              >
-                Remove
-              </Button>
-            </ListItemSecondaryAction>
-          </ListItem>
-        ))}
-    </List>
+    <div></div>
+    // <List subheader={<ListSubheader>Households</ListSubheader>}>
+    //   <ListItem>
+    //     <ListItemText>
+    //       <TextField
+    //         label="Add Household"
+    //         onChange={(event) => onHouseholdInputChange(event)}
+    //         onKeyUp={(event) => onHouseholdInputKeyPress(event)}
+    //         value={householdInput}
+    //       />
+    //     </ListItemText>
+    //     <ListItemSecondaryAction>
+    //       <Button
+    //         disabled={isAddButtonDisabled}
+    //         variant="contained"
+    //         color="primary"
+    //         onClick={onAddButtonClicked}
+    //       >
+    //         Add
+    //       </Button>
+    //     </ListItemSecondaryAction>
+    //   </ListItem>
+    //   {props.households
+    //     .filter((household) => household !== props.households[0])
+    //     .map((household) => (
+    //       <ListItem key={household}>
+    //         <ListItemIcon>
+    //           <HouseIcon />
+    //         </ListItemIcon>
+    //         <ListItemText primary={household} />
+    //         <ListItemSecondaryAction>
+    //           <Button
+    //             fullWidth
+    //             variant="contained"
+    //             color="secondary"
+    //             onClick={() => props.removeHousehold(household)}
+    //           >
+    //             Remove
+    //           </Button>
+    //         </ListItemSecondaryAction>
+    //       </ListItem>
+    //     ))}
+    // </List>
   );
 }
