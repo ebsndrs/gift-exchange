@@ -1,193 +1,199 @@
-import React, { useState, useEffect } from 'react';
-import HouseholdsList from './components/HouseholdsList';
-import PeopleList from './components/PeopleList';
-import RulesList from './components/RulesList';
-import MatchesList from './components/MatchesList';
-import MatchHelper from './matching/MatchHelper';
-import { AppState, Rules, Person, Match } from './types';
+import React, { useState, useEffect } from "react";
+import Households from "./components/Households";
+import PeopleList from "./components/People";
+import RulesList from "./components/Rules";
+import MatchesList from "./components/Matches";
+import { Rules, Person, Match } from "./types";
+import MatchHelper, { generatePermutation } from "./matching";
+import { Grid, Card, CardHeader, CardContent } from "@material-ui/core";
 
 export default function App() {
-  // const matchHelper = new MatchHelper(genders);
+  const genders = ["None", "Male", "Female", "Other"];
+  const matchHelper = new MatchHelper(genders);
 
   const [rules, setRules] = useState<Rules>({
-      preventCircularGifting: false,
-      preventSameHousehold: false,
-      preventSameGender: false,
-      preventSameAgeGroup: false
+    preventCircularGifting: false,
+    preventSameHousehold: false,
+    preventSameGender: false,
+    preventSameAgeGroup: false,
   });
   const [people, setPeople] = useState<Person[]>([]);
   const [households, setHouseholds] = useState<string[]>([]);
   const [matches, setMatches] = useState<Match[]>([]);
+  const [matchPermutation, setMatchPermutation] = useState(0);
   const [areMatchesLoading, setAreMatchesLoading] = useState(false);
   const [areMatchesValid, setAreMatchesValid] = useState(false);
 
   const toggleRule = (name: string) => {
     setRules({
       ...rules,
-      [name]: ![name]
+      [name]: ![name],
     });
-  }
+  };
 
   const addPerson = (person: Person) => {
     person.name.trim();
     person.household?.trim();
     person.gender?.trim();
 
-    const isValid = person.name !== undefined && person.name !== '' && !state.people.some(p => p.name === person.name)
+    const isValid =
+      person.name !== undefined &&
+      person.name !== "" &&
+      !people.some((p) => p.name === person.name);
 
     if (isValid) {
-      setState({
-        ...state,
-        people: [
-          ...state.people,
-          person
-        ]
-      });
+      setPeople([...people, person]);
     }
-  }
+  };
 
   const removePerson = (name: string) => {
-    const index = state.people.findIndex(p => p.name === name);
+    const index = people.findIndex((p) => p.name === name);
 
-    if (state.people[index] !== undefined) {
-      state.people.splice(index, 1);
-      setState({
-        ...state,
-        people: [...state.people]
-      });
+    if (people[index] !== undefined) {
+      people.splice(index, 1);
+      setPeople([...people]);
     }
-  }
+  };
 
   const resetPeople = () => {
-    setState({
-      ...state,
-      people: []
-    });
-  }
+    setPeople([]);
+  };
 
   const addHousehold = (household: string) => {
     household.trim();
 
-    const isValid = household !== undefined && household !== '' && !state.households.includes(household);
+    const isValid =
+      household !== undefined &&
+      household !== "" &&
+      !households.includes(household);
 
     if (isValid) {
-      setState({
-        ...state,
-        households: [
-          ...state.households,
-          household
-        ]
-      });
+      setHouseholds([...households, household]);
     }
-  }
+  };
 
   const removeHousehold = (household: string) => {
-    const index = state.households.findIndex(h => h === household);
+    const index = households.findIndex((h) => h === household);
 
-    if (index !== 0 && state.households[index] !== undefined) {
-      const peopleWithHousehold = state.people.filter(p => p.household === state.households[index]);
+    if (index !== 0 && households[index] !== undefined) {
+      const peopleWithHousehold = people.filter(
+        (p) => p.household === households[index]
+      );
 
-      peopleWithHousehold.forEach(person => {
-        person.household = state.households[0];
+      peopleWithHousehold.forEach((person) => {
+        person.household = households[0];
       });
 
-      state.households.splice(index, 1);
+      households.splice(index, 1);
 
-      setState({
-        ...state,
-        people: [...state.people],
-        households: [...state.households]
-      });
+      setPeople([...people]);
+      setHouseholds([...households]);
     }
-  }
+  };
 
   const generateMatches = () => {
-      if (state.people.length < 2) {
-        setState({
-          ...state,
-          areMatchesValid: false,
-          matchesMessage: 'Add 2 or more people to start matching.'
-        })
+    if (people.length < 2) {
+      setAreMatchesValid(false);
+    } else {
+      setAreMatchesLoading(true);
+
+      let shuffledPeople = generatePermutation(people, matchPermutation);
+      if (shuffledPeople === undefined) {
+        setMatchPermutation(0);
+        shuffledPeople = generatePermutation(people, matchPermutation);
       } else {
-        setState({
-          ...state,
-          areMatchesGenerating: true
-        });
+        setMatchPermutation(matchPermutation + 1);
+      }
 
+      let adjacencyMatrix = matchHelper.buildAdjacencyMatrix(
+        shuffledPeople,
+        households,
+        rules
+      );
+      let maxMatches = matchHelper.maximumBipartiteMatching(
+        adjacencyMatrix,
+        people.length,
+        people.length
+      );
 
-        let shuffledPeople = matchHelper.shufflePeople(state.people);
-        let adjacencyMatrix = matchHelper.buildAdjacencyMatrix(shuffledPeople, state.households, state.rules);
-        let maxMatches = matchHelper.maximumBipartiteMatching(adjacencyMatrix, state.people.length, state.people.length);
+      if (maxMatches === people.length) {
+        let matches = matchHelper.generateMatches(
+          shuffledPeople,
+          adjacencyMatrix
+        );
 
-        if (maxMatches === state.people.length) {
-          let matches = matchHelper.generateMatches(shuffledPeople, adjacencyMatrix)
-
-          while (!matchHelper.areMatchesValid(state.people.length, matches, state.households, state.rules)) {
-            shuffledPeople = matchHelper.shufflePeople(state.people);
-            adjacencyMatrix = matchHelper.buildAdjacencyMatrix(shuffledPeople, state.households, state.rules);
-            matches = matchHelper.generateMatches(shuffledPeople, adjacencyMatrix);
-          }
-
-          matches.sort((firstMatch, secondMatch) => firstMatch.gifter.name.localeCompare(secondMatch.gifter.name));
-          setState({
-            ...state,
-            matches: matches,
-            areMatchesGenerating: false,
-            areMatchesValid: true
-          });
-        } else {
-          setState({
-            ...state,
-            matches: [],
-            areMatchesGenerating: false,
-            areMatchesValid: false,
-            matchesMessage: 'No matches could be made with your current settings. Try changing something.'
-          });
+        while (
+          !matchHelper.areMatchesValid(
+            people.length,
+            matches,
+            households,
+            rules
+          )
+        ) {
+          shuffledPeople = matchHelper.shufflePeople(people);
+          adjacencyMatrix = matchHelper.buildAdjacencyMatrix(
+            shuffledPeople,
+            households,
+            rules
+          );
+          matches = matchHelper.generateMatches(
+            shuffledPeople,
+            adjacencyMatrix
+          );
         }
+
+        matches.sort((firstMatch, secondMatch) =>
+          firstMatch.giver.name.localeCompare(secondMatch.giver.name)
+        );
+        setMatches(matches);
+        setAreMatchesLoading(false);
+        setAreMatchesValid(true);
+      } else {
+        setMatches([]);
+        setAreMatchesLoading(false);
+        setAreMatchesValid(false);
       }
     }
+  };
 
-    useEffect(generateMatches, [state.people, state.households, state.rules]);
+  useEffect(generateMatches, [people, households, rules]);
 
-    return (
-      <div className="app">
-        <Grid container spacing={3}>
-          <Grid item xs={12} md={3}>
-            <Card>
-              <CardHeader title="Setup" />
-              <CardContent>
-                <RulesList
-                  rules={state.rules}
-                  changeRule={toggleRule}
-                />
-                <HouseholdsList
-                  households={state.households}
-                  addHousehold={addHousehold}
-                  removeHousehold={removeHousehold}
-                />
-              </CardContent>
-            </Card>
-          </Grid>
-          <Grid item xs={12} md={6}>
-            <PeopleList
-              people={state.people}
-              households={state.households}
-              genders={genders}
-              addPerson={addPerson}
-              removePerson={removePerson}
-              resetPeople={resetPeople}
-            />
-          </Grid>
-          <Grid item xs={12} md={3}>
-            <MatchesList
-              matches={state.matches}
-              areMatchesGenerating={state.areMatchesGenerating}
-              areMatchesValid={state.areMatchesValid}
-              matchesMessage={state.matchesMessage}
-              regenerateMatches={generateMatches}
-            />
-          </Grid>
+  return (
+    <div className="app">
+      <Grid container spacing={3}>
+        <Grid item xs={12} md={3}>
+          <Card>
+            <CardHeader title="Setup" />
+            <CardContent>
+              <RulesList rules={rules} changeRule={toggleRule} />
+              <Households
+                households={households}
+                addHousehold={addHousehold}
+                removeHousehold={removeHousehold}
+              />
+            </CardContent>
+          </Card>
         </Grid>
-      </div>
-    )
-  }
+        <Grid item xs={12} md={6}>
+          <PeopleList
+            people={people}
+            households={households}
+            genders={genders}
+            addPerson={addPerson}
+            removePerson={removePerson}
+            resetPeople={resetPeople}
+          />
+        </Grid>
+        <Grid item xs={12} md={3}>
+          <MatchesList
+            matches={matches}
+            areMatchesGenerating={areMatchesLoading}
+            areMatchesValid={areMatchesValid}
+            // matchesMessage={matchesMessage}
+            regenerateMatches={generateMatches}
+          />
+        </Grid>
+      </Grid>
+    </div>
+  );
+}

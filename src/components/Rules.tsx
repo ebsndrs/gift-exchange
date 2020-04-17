@@ -1,12 +1,20 @@
-import { List, ListItem, ListItemIcon, ListItemSecondaryAction, ListItemText, ListSubheader, Switch } from '@material-ui/core';
-import DateRangeIcon from '@material-ui/icons/DateRange';
-import HouseIcon from '@material-ui/icons/House';
-import SyncIcon from '@material-ui/icons/Sync';
-import WcIcon from '@material-ui/icons/Wc';
-import React from 'react';
-import RulesListProps from '../interfaces/RulesListProps';
+import {
+  List,
+  ListItem,
+  ListItemIcon,
+  ListItemSecondaryAction,
+  ListItemText,
+  ListSubheader,
+  Switch,
+} from "@material-ui/core";
+import DateRangeIcon from "@material-ui/icons/DateRange";
+import HouseIcon from "@material-ui/icons/House";
+import SyncIcon from "@material-ui/icons/Sync";
+import WcIcon from "@material-ui/icons/Wc";
+import React from "react";
+import { RulesProps } from "../types";
 
-export default function RulesList(props: RulesListProps) {
+export default function RulesList(props: RulesProps) {
   return (
     <List subheader={<ListSubheader>Rules</ListSubheader>}>
       {/* <ListItem>
@@ -26,11 +34,16 @@ export default function RulesList(props: RulesListProps) {
         <ListItemIcon>
           <HouseIcon />
         </ListItemIcon>
-        <ListItemText id="switch-list-label-preventSameHousehold" primary="Prevent Same Household" />
+        <ListItemText
+          id="switch-list-label-preventSameHousehold"
+          primary="Prevent Same Household"
+        />
         <ListItemSecondaryAction>
           <Switch
             edge="end"
-            onChange={(event) => props.changeRule('preventSameHousehold', event.target.checked)}
+            onChange={(event) =>
+              props.changeRule("preventSameHousehold", event.target.checked)
+            }
             checked={props.rules.preventSameHousehold}
           />
         </ListItemSecondaryAction>
@@ -39,11 +52,16 @@ export default function RulesList(props: RulesListProps) {
         <ListItemIcon>
           <WcIcon />
         </ListItemIcon>
-        <ListItemText id="switch-list-label-preventSameGender" primary="Prevent Same Gender" />
+        <ListItemText
+          id="switch-list-label-preventSameGender"
+          primary="Prevent Same Gender"
+        />
         <ListItemSecondaryAction>
           <Switch
             edge="end"
-            onChange={(event) => props.changeRule('preventSameGender', event.target.checked)}
+            onChange={(event) =>
+              props.changeRule("preventSameGender", event.target.checked)
+            }
             checked={props.rules.preventSameGender}
           />
         </ListItemSecondaryAction>

@@ -1,36 +1,58 @@
-import { Button, Card, CardContent, CardHeader, FormControl, IconButton, InputLabel, MenuItem, Select, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField } from "@material-ui/core";
-import ClearIcon from '@material-ui/icons/Clear';
+import {
+  Button,
+  Card,
+  CardContent,
+  CardHeader,
+  FormControl,
+  IconButton,
+  InputLabel,
+  MenuItem,
+  Select,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  TextField,
+} from "@material-ui/core";
+import ClearIcon from "@material-ui/icons/Clear";
 import React, { useState } from "react";
-import PeopleListProps from "../interfaces/PeopleListProps";
-import Person from "../interfaces/Person";
+import { PeopleProps, Person } from "../types";
 
-export default function PeopleList(props: PeopleListProps) {
+export default function PeopleList(props: PeopleProps) {
   const [personInput, setPersonInput] = useState<Person>({
-    name: '',
+    name: "",
     household: props.households[0],
-    gender: props.genders[0],
-    age: 0
+    gender: "None",
+    age: 0,
   });
   const [isAddButtonDisabled, setIsAddButtonDisabled] = useState(true);
 
-  const onPersonInputNameChange = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const onPersonInputNameChange = (
+    event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
     setPersonInput({
       ...personInput,
-      name: event.target.value
+      name: event.target.value,
     });
 
     const trimmedName = event.target.value.trim();
-    const isAddButtonDisabled = trimmedName === '' ||
-      props.people.some(p => p.name === trimmedName) ||
+    const isAddButtonDisabled =
+      trimmedName === "" ||
+      props.people.some((p) => p.name === trimmedName) ||
       trimmedName === undefined;
 
     setIsAddButtonDisabled(isAddButtonDisabled);
-  }
+  };
 
-  const onPersonInputKeyPress = (event: React.KeyboardEvent<HTMLDivElement | HTMLTextAreaElement>) => {
+  const onPersonInputKeyPress = (
+    event: React.KeyboardEvent<HTMLDivElement | HTMLTextAreaElement>
+  ) => {
     if (event.keyCode === 13) {
-      const shouldAddPerson = personInput.name !== '' &&
-        !props.people.some(p => p.name === personInput.name) &&
+      const shouldAddPerson =
+        personInput.name !== "" &&
+        !props.people.some((p) => p.name === personInput.name) &&
         personInput.name !== undefined;
 
       if (shouldAddPerson) {
@@ -38,44 +60,48 @@ export default function PeopleList(props: PeopleListProps) {
         onAddButtonClicked();
       }
     }
-  }
+  };
 
-  const onSelectedHouseholdChange = (event: React.ChangeEvent<{ value: unknown }>) => {
+  const onSelectedHouseholdChange = (
+    event: React.ChangeEvent<{ value: unknown }>
+  ) => {
     const value = event.target.value as string;
     value.trim();
 
-    if (value !== undefined && value !== '') {
+    if (value !== undefined && value !== "") {
       setPersonInput({
         ...personInput,
-        household: value
+        household: value,
       });
     }
-  }
+  };
 
-  const onSelectedGenderChange = (event: React.ChangeEvent<{ value: unknown }>) => {
-    const value = event.target.value as string;
-    value.trim();
+  // const onSelectedGenderChange = (
+  //   event: React.ChangeEvent<{ value: unknown }>
+  // ) => {
+  //   const value = event.target.value as string;
+  //   value.trim();
 
-    if (value !== undefined && value !== '') {
-      setPersonInput({
-        ...personInput,
-        gender: value
-      });
-    }
-  }
+  //   if (value !== undefined && value !== "") {
+  //     setPersonInput({
+  //       ...personInput,
+  //       gender: value,
+  //     });
+  //   }
+  // };
 
   const onAddButtonClicked = () => {
     props.addPerson(personInput);
 
     setPersonInput({
-      name: '',
+      name: "",
       household: props.households[0],
-      gender: props.genders[0],
-      age: 0
+      gender: "None",
+      age: 0,
     });
 
     setIsAddButtonDisabled(true);
-  }
+  };
 
   return (
     <Card>
@@ -92,7 +118,7 @@ export default function PeopleList(props: PeopleListProps) {
           <Table>
             <TableHead>
               <TableRow>
-                <TableCell style={{ width: '30%' }}>
+                <TableCell style={{ width: "30%" }}>
                   <FormControl fullWidth>
                     <TextField
                       id="personInputName"
@@ -110,11 +136,15 @@ export default function PeopleList(props: PeopleListProps) {
                     <Select
                       id="personInputHousehold"
                       value={personInput.household}
-                      onChange={(event: React.ChangeEvent<{ value: unknown; }>) => onSelectedHouseholdChange(event)}
+                      onChange={(
+                        event: React.ChangeEvent<{ value: unknown }>
+                      ) => onSelectedHouseholdChange(event)}
                     >
-                      {props.households.map(household =>
-                        <MenuItem key={household} value={household}>{household}</MenuItem>
-                      )}
+                      {props.households.map((household) => (
+                        <MenuItem key={household} value={household}>
+                          {household}
+                        </MenuItem>
+                      ))}
                     </Select>
                   </FormControl>
                 </TableCell>
@@ -124,15 +154,19 @@ export default function PeopleList(props: PeopleListProps) {
                     <Select
                       id="personInputGender"
                       value={personInput.gender}
-                      onChange={(event: React.ChangeEvent<{ value: unknown; }>) => onSelectedGenderChange(event)}
+                      // onChange={(
+                      //   event: React.ChangeEvent<{ value: unknown }>
+                      // ) => onSelectedGenderChange(event)}
                     >
-                      {props.genders.map(gender =>
-                        <MenuItem key={gender} value={gender}>{gender}</MenuItem>
-                      )}
+                      {props.genders.map((gender) => (
+                        <MenuItem key={gender} value={gender}>
+                          {gender}
+                        </MenuItem>
+                      ))}
                     </Select>
                   </FormControl>
                 </TableCell>
-                <TableCell style={{ width: '11%' }}>
+                <TableCell style={{ width: "11%" }}>
                   <FormControl fullWidth>
                     <TextField
                       id="personInputAge"
@@ -140,7 +174,7 @@ export default function PeopleList(props: PeopleListProps) {
                       placeholder="Age"
                       label="Age"
                       value={personInput.age}
-                      inputProps={{ min: '1' }}
+                      inputProps={{ min: "1" }}
                     />
                   </FormControl>
                 </TableCell>
@@ -165,7 +199,7 @@ export default function PeopleList(props: PeopleListProps) {
               </TableRow>
             </TableHead>
             <TableBody>
-              {props.people.map(person =>
+              {props.people.map((person) => (
                 <TableRow key={person.name}>
                   <TableCell>{person.name}</TableCell>
                   <TableCell>{person.household}</TableCell>
@@ -182,7 +216,7 @@ export default function PeopleList(props: PeopleListProps) {
                     </Button>
                   </TableCell>
                 </TableRow>
-              )}
+              ))}
             </TableBody>
           </Table>
         </TableContainer>
