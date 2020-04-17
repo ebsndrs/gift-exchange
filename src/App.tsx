@@ -1,40 +1,30 @@
-import { Card, CardContent, CardHeader, Grid, Button } from '@material-ui/core';
 import React, { useState, useEffect } from 'react';
-import './App.css';
 import HouseholdsList from './components/HouseholdsList';
 import PeopleList from './components/PeopleList';
 import RulesList from './components/RulesList';
-import Person from './interfaces/Person';
-import AppState from './interfaces/AppState';
 import MatchesList from './components/MatchesList';
 import MatchHelper from './matching/MatchHelper';
+import { AppState, Rules, Person, Match } from './types';
 
 export default function App() {
-  const genders: string[] = ['None', 'Male', 'Female', 'Other'];
-  const matchHelper = new MatchHelper(genders);
+  // const matchHelper = new MatchHelper(genders);
 
-  const [state, setState] = useState<AppState>({
-    rules: {
+  const [rules, setRules] = useState<Rules>({
       preventCircularGifting: false,
       preventSameHousehold: false,
       preventSameGender: false,
       preventSameAgeGroup: false
-    },
-    people: [],
-    households: ['None'],
-    matches: [],
-    areMatchesGenerating: false,
-    areMatchesValid: false,
-    matchesMessage: ''
   });
+  const [people, setPeople] = useState<Person[]>([]);
+  const [households, setHouseholds] = useState<string[]>([]);
+  const [matches, setMatches] = useState<Match[]>([]);
+  const [areMatchesLoading, setAreMatchesLoading] = useState(false);
+  const [areMatchesValid, setAreMatchesValid] = useState(false);
 
-  const changeRule = (name: string, value: boolean) => {
-    setState({
-      ...state,
-      rules: {
-        ...state.rules,
-        [name]: value
-      }
+  const toggleRule = (name: string) => {
+    setRules({
+      ...rules,
+      [name]: ![name]
     });
   }
 
@@ -168,7 +158,7 @@ export default function App() {
               <CardContent>
                 <RulesList
                   rules={state.rules}
-                  changeRule={changeRule}
+                  changeRule={toggleRule}
                 />
                 <HouseholdsList
                   households={state.households}
