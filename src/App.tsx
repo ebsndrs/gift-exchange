@@ -4,7 +4,14 @@ import PeopleList from './components/People';
 import Matches from './components/Matches';
 import { default as RulesComponent } from './components/Rules';
 import { Rules, Person, Match } from './types';
-import { getMatches, nFactorialDivN } from './matching';
+import {
+  getMatches,
+  nFactorialDivN,
+  buildAdjacencyMatrix,
+  maximumBipartiteMatching,
+  getRandomInt,
+  nFactorial,
+} from './matching';
 import './tailwind.css';
 
 export default function App() {
@@ -40,7 +47,6 @@ export default function App() {
   const [households, setHouseholds] = useState<string[]>([]);
   const [matches, setMatches] = useState<Match[]>([]);
   const [matchPermutation, setMatchPermutation] = useState(0);
-  const [matchIterator, setMatchIterator] = useState(0);
   const [areMatchesLoading, setAreMatchesLoading] = useState(false);
   const [areMatchesValid, setAreMatchesValid] = useState(false);
   const [invalidMatchesError, setInvalidMatchesError] = useState('');
@@ -110,84 +116,119 @@ export default function App() {
     }
   };
 
+  const cycleMatches = () => {
+    generateMatches();
+  };
+
   const generateMatches = () => {
+    //We can do anything until we have 2 people
     if (people.length < 2) {
-      //We can do anything until we have 2 people
       setAreMatchesValid(false);
       setInvalidMatchesError(
         'Please add two or more people to start generating matches.'
       );
-    } else if (people.length > 18) {
-      //18! causes an integer overflow in javascript, thus it's the highest number we support
-      //right now.
+
+      return;
+    }
+
+    //18! causes an integer overflow in javascript, so 18 is the max of people supported
+    if (people.length > 18) {
       setAreMatchesValid(false);
       setInvalidMatchesError(
         "Can't generated matches for more than 18 people."
       );
-    } else {
-      setAreMatchesLoading(true);
 
-      let newMatches: Match[] = [];
+      return;
+    }
 
-      //the number of potential matches for a set of n people is n! / n.
-      //this only holds true if there are no rules other than that people can't be matched to themselves
-      //as an added convenience, all potential matches can be generated off of the first n! / n
-      //permutations of the people array.
-      //any rules we apply will just winnow this field of potential matches.
+    setAreMatchesLoading(true);
 
-      const numberOfPotentialMatches = nFactorialDivN[people.length];
+    let newMatches: Match[] = [];
 
-      //by setting i to the number the current permutation, we can use this function
-      //for both generating matches the first time and first regenerating them with
-      //the guarantee that the next match set will be different.
-      for (let i = matchPermutation; i < numberOfPotentialMatches; i++) {
-        //try to get a match for the supplied permutation and rules
-        const potentialMatchSet = getMatches(people, i, households, rules);
+    // const numberOfPotentialMatches = nFactorialDivN[people.length];
 
-        if (potentialMatchSet.length !== people.length) {
-          continue; //the match function couldn't generate match. Try the next permutation
-        } else {
-          newMatches = potentialMatchSet;
+    const matrix = buildAdjacencyMatrix(people, households, rules);
 
-          //sort matches by name of the giver
-          // newMatches.sort((first, second) =>
-          //   first.giver.name.localeCompare(second.giver.name)
-          // );
+    const maximumMatches = maximumBipartiteMatching(
+      matrix,
+      people.length,
+      people.length
+    );
 
-          setMatches(newMatches);
-          setMatchPermutation(i);
-          setAreMatchesValid(true);
-          setInvalidMatchesError('');
-
-          return;
-        }
-      }
-
-      //if we've reached this point, then no matches could be found.
-
+    if (maximumMatches < 1) {
       setMatches([]);
       setAreMatchesValid(false);
       setInvalidMatchesError(
         'No complete match set can be made with the supplied rules'
       );
-      setAreMatchesLoading(false);
-    }
-  };
-
-  //I'd like to refactor this because right now,
-  //Every subsequent match will have at least one that is same
-  //match as the last one until you've passed n! / n / length matches
-  const regenerateMatches = () => {
-    const potentialMatches = nFactorialDivN[people.length];
-
-    if (matchPermutation + 1 >= potentialMatches) {
-      setMatchPermutation(0);
     } else {
-      setMatchPermutation(matchPermutation + 1);
+      //get a match from a random permutation
+      let newMatches: Match[] = [];
+      let n = getRandomInt(0, nFactorial[people.length] - 1);
+
+      //regenerate n if it matches the current permutation
+      while (n === matchPermutation) {
+        n = getRandomInt(0, nFactorial[people.length] - 1);
+      }
+
+      console.log('n = ' + n);
+
+      newMatches = getMatches(people, n, households, rules);
+      console.log(newMatches);
+
+      //if a match wasn't found, try with a new random permutation
+      while (newMatches.length === 0) {
+        let newN = getRandomInt(0, nFactorial[people.length] - 1);
+
+        //if we generated the same  random number, try again (but only if there is more than 1 possible match)
+        while (newN === n && people.length > 2) {
+          newN = getRandomInt(0, nFactorial[people.length] - 1);
+        }
+
+        n = newN;
+        newMatches = getMatches(people, n, households, rules);
+        console.log(newMatches);
+      }
+
+      setMatches(newMatches);
+      setMatchPermutation(n);
+      setAreMatchesValid(true);
+      setInvalidMatchesError('');
     }
+    // //by setting i to the number the current permutation, we can use this function
+    // //for both generating matches the first time and first regenerating them with
+    // //the guarantee that the next match set will be different.
+    // for (let i = matchPermutation; i < numberOfPotentialMatches; i++) {
+    //   //try to get a match for the supplied permutation and rules
+    //   const potentialMatchSet = getMatches(people, i, households, rules);
+
+    //   if (potentialMatchSet.length !== people.length) {
+    //     continue; //the match function couldn't generate match. Try the next permutation
+    //   } else {
+    //     newMatches = potentialMatchSet;
+
+    //     //sort matches by name of the giver
+    //     // newMatches.sort((first, second) =>
+    //     //   first.giver.name.localeCompare(second.giver.name)
+    //     // );
+
+    //     setMatches(newMatches);
+
+    //     return;
+    //   }
+    // }
+
+    // //if we've reached this point, then no matches could be found.
+
+    // setMatches([]);
+    // setAreMatchesValid(false);
+    // setInvalidMatchesError(
+    //   'No complete match set can be made with the supplied rules'
+    // );
+    // setAreMatchesLoading(false);
   };
 
-  useEffect(generateMatches, [people, households, rules, matchPermutation]);
+  useEffect(generateMatches, [people, households, rules]);
 
   return (
     <div className="app">
@@ -207,7 +248,7 @@ export default function App() {
           matches={matches}
           areMatchesGenerating={false}
           areMatchesValid={false}
-          regenerateMatches={regenerateMatches}
+          regenerateMatches={cycleMatches}
         />
       </div>
       {/* <Grid container spacing={3}>

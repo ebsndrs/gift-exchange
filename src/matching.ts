@@ -56,6 +56,12 @@ export const nFactorialDivN: number[] = [
   355687428096000, //n = 18
 ];
 
+export function getRandomInt(min: number, max: number) {
+  min = Math.ceil(min);
+  max = Math.floor(max);
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
 /*
   Gets all matches for an array of people.
   Specifically, it generates a specific permutation (n) of an array of people.
@@ -153,7 +159,7 @@ function getPermutation(people: Person[], n: number) {
 
   This generated matrix is then used to actually create the matches between people.
   */
-function buildAdjacencyMatrix(
+export function buildAdjacencyMatrix(
   people: Person[],
   households: string[],
   rules: Rules
@@ -241,7 +247,7 @@ function buildAdjacencyMatrix(
   then this function show that a match set is impossible, so we don't go to the
   trouble of actually attempting to build the match set.
 */
-function maximumBipartiteMatching(
+export function maximumBipartiteMatching(
   adjacencyMatrix: number[][],
   giverCount: number,
   receiverCount: number
