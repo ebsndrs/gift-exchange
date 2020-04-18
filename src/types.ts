@@ -15,7 +15,6 @@ export interface Person {
 }
 
 export interface Match {
-  p: number;
   giver: Person;
   receiver: Person;
 }
@@ -43,7 +42,7 @@ export interface PeopleProps {
 }
 
 export interface MatchesProps {
-  matches: Match[][];
+  matches: Match[];
   areMatchesGenerating: boolean;
   areMatchesValid: boolean;
   // matchesMessage: string;

@@ -1,4 +1,4 @@
-import { Person, Match, Rules, Factorial } from './types';
+import { Person, Match, Rules } from './types';
 
 /*
   Contains all calculated (n!) for n <= 18.
@@ -57,10 +57,60 @@ export const nFactorialDivN: number[] = [
 ];
 
 /*
+  Gets all matches for an array of people.
+  Specifically, it generates a specific permutation (n) of an array of people.
+  With that permutation and the rules defined by the front-end, it generates an adjacency matrix.
+  This matrix determines which matches *can* allowed.
+
+  Using this matrix, it determines whether or not a fully matched set can be made.
+  If certain rules prevent a full match set from being made,
+  this function will return an empty set to signify that a match was impossible with the supplied inputs.
+  In this case, the caller will likely try a different permutation until a match is found.
+
+  If a fully matched set can be made, it generates the bipartite matching set and returns it.
+*/
+export function getMatches(
+  people: Person[],
+  n: number,
+  households: string[],
+  rules: Rules
+): Match[] {
+  //get n permutation of people
+  const permutation = getPermutation(people, n);
+
+  //build adjacency matrix with that permutation, households, rules
+  const matrix = buildAdjacencyMatrix(permutation, households, rules);
+
+  //calculate the max matches
+  const maxMatches = maximumBipartiteMatching(
+    matrix,
+    people.length,
+    people.length
+  );
+
+  let matches: Match[] = [];
+
+  //if max matches is equal to the length of people:
+  if (maxMatches === people.length) {
+    matches = generateMatches(permutation, matrix);
+    // matches.sort((first, second) =>
+    //   first.giver.name.localeCompare(second.giver.name)
+    // );
+  }
+
+  return matches;
+  //generate matches
+  //sort them by the same order that people were originally in
+  //return it
+  //else
+  //return empty [] (this means matches couldn't be generated)
+}
+
+/*
   Gets the specific permutation "n" of the array "people".
   Specifically, the order of permutations as defined in Heap's Algorithm.
 */
-export function getPermutation(people: Person[], n: number) {
+function getPermutation(people: Person[], n: number) {
   let peopleCopy = [...people]; // copy of the set
   let length = people.length; // length of the set
   let result: Person[] = []; // return value, empty set
@@ -88,55 +138,22 @@ export function getPermutation(people: Person[], n: number) {
 }
 
 /*
-  Gets all matches for an array of people.
-  Specifically, it generates a specific permutation (n) of an array of people.
-  With that permutation and the rules defined by the front-end, it generates an adjacency matrix.
-  This matrix determines which matches *can* allowed.
+  Uses the supplied parameters to build an adjacency matrix that determines whether a match can be made.
+  An adjacency matrix is a data structure that signals whether two objects in a graph are "adjacent",
+  or linked by a vertex.
+  In our use case, if two people are adjacent, they are able to be matched. In the simplest case (no rules),
+  every object is adjacent to every object other than itself.
+  The various rules that prevent certain matches can make two objects non-adjacent.
 
-  Using this matrix, it determines whether or not a fully matched set can be made.
-  If certain rules prevent a full match set from being made,
-  this function will return an empty set to signify that a match was impossible with the supplied inputs.
+  In this implementation, our adjacency matrix is a two-dimensional array on integers.
+  Each dimension is the same length as the original array.
+  For every person, we check our rules against every person to determine
+  if a match can be made. If it passes all the rules, the value of the cell in the matrix that represents
+  the intersection of those two people is iterated.
 
-  If a fully matched set can be made, it generates the bipartite matching set and returns it.
-*/
-export function getMatches(
-  people: Person[],
-  n: number,
-  households: string[],
-  rules: Rules
-): Match[] {
-  //get n permutation of people
-  const permutation = getPermutation(people, n);
-
-  //build adjacency matrix with that permuation, households, rules
-  const matrix = buildAdjacencyMatrix(permutation, households, rules);
-
-  //calculate the max matches
-  const maxMatches = maximumBipartiteMatching(
-    matrix,
-    people.length,
-    people.length
-  );
-
-  let matches: Match[] = [];
-
-  //if max matches is equal to the length of people:
-  if (maxMatches === people.length) {
-    matches = generateMatches(permutation, matrix, n);
-    matches.sort((first, second) =>
-      first.giver.name.localeCompare(second.giver.name)
-    );
-  }
-
-  return matches;
-  //generate matches
-  //sort them by the same order that people were originally in
-  //return it
-  //else
-  //return empty [] (this means matches couldn't be generated)
-}
-
-export function buildAdjacencyMatrix(
+  This generated matrix is then used to actually create the matches between people.
+  */
+function buildAdjacencyMatrix(
   people: Person[],
   households: string[],
   rules: Rules
@@ -171,10 +188,8 @@ export function buildAdjacencyMatrix(
 
       //if the rules prevent circular gifting, account for that
       if (rules.preventCircularGifting) {
-        //not sure how this will be implemented. We can't know if circular giving has occured until
+        //not sure how this will be implemented. We can't know if circular giving has occurred until
         //after the matrix has been generated. So that means we need to check it after that.
-        //Perhaps when we  check for circular giving, we add any matches that are circular to an array,
-        //call the function recursively but with those disallowed matches, and use that to winnow the field.
       }
 
       //if the rules prevent the same household, match on that only if both households are not the default
@@ -216,7 +231,17 @@ export function buildAdjacencyMatrix(
   return matrix;
 }
 
-export function maximumBipartiteMatching(
+/*
+  Determines the maximum number of matches than can be theoretically made
+  for a supplied adjacency matrix.
+  
+  This is important because if an adjacency matrix was generated with rules
+  that prevent a complete match set (for example, if 2 people in the same
+  household were in the list, but the rules prevented same household giving),
+  then this function show that a match set is impossible, so we don't go to the
+  trouble of actually attempting to build the match set.
+*/
+function maximumBipartiteMatching(
   adjacencyMatrix: number[][],
   giverCount: number,
   receiverCount: number
@@ -251,8 +276,11 @@ export function maximumBipartiteMatching(
   return result;
 }
 
-// A DFS based recursive function that returns true if a match for the supplied vertex is possible
-export function bipartiteMatching(
+/*
+  A DFS based recursive function that returns true only if a match for the supplied vertex is possible
+  Used when calculating the number of potential matches.
+*/
+function bipartiteMatching(
   giverCount: number,
   receiverCount: number,
   adjacencyMatrix: number[][],
@@ -285,10 +313,18 @@ export function bipartiteMatching(
   return false;
 }
 
-export function generateMatches(
+/*
+  Builds the match set from a given permutation of people and adjacency matrix
+
+  Essentially, it takes each person in the permutation, uses the adjacency matrix
+  to identify the next person in the permutation that is matchable, and creates the link
+
+  It then resets every entry in the matrix for both of those people to 0, to show that they
+  are now unavailable for matching
+*/
+function generateMatches(
   people: Person[],
-  adjacencyMatrix: number[][],
-  p: number
+  adjacencyMatrix: number[][]
 ): Match[] {
   let matches: Match[] = [];
 
@@ -300,7 +336,7 @@ export function generateMatches(
       const receiver = people[j];
 
       if (adjacencyMatrix[i][j] > 0 && adjacencyMatrix[j][i] > 0) {
-        matches.push({ giver: giver, receiver: receiver, p: p });
+        matches.push({ giver: giver, receiver: receiver });
         adjacencyMatrix[i][j] = 0;
         adjacencyMatrix[j][i] = 0;
         for (let k = 0; k < adjacencyMatrix[i].length; k++) {
@@ -315,111 +351,8 @@ export function generateMatches(
     const lastGiver = people[people.length - 1];
     const lastReceiver = people[0];
 
-    matches.push({ giver: lastGiver, receiver: lastReceiver, p: p });
+    matches.push({ giver: lastGiver, receiver: lastReceiver });
   }
 
   return matches;
 }
-
-// export default class MatchHelper {
-//   genders: string[];
-
-//   constructor(genders: string[]) {
-//     this.genders = genders;
-//   }
-
-//   areMatchesValid(
-//     peopleLength: number,
-//     matches: Match[],
-//     households: string[],
-//     rules: Rules
-//   ): boolean {
-//     let areMatchesValid = true;
-
-//     //matches length must be equal to people length
-//     if (matches.length !== peopleLength) {
-//       areMatchesValid = false;
-//     } else {
-//       for (let i = 0; i < matches.length; i++) {
-//         const match = matches[i];
-
-//         //one cannot give to themself
-//         if (match.giver.name === match.receiver.name) {
-//           areMatchesValid = false;
-//           break;
-//         }
-
-//         //if there's more than one of the same giver, it's invalid
-//         if (
-//           matches.filter((m) => m.giver.name === match.giver.name).length > 1
-//         ) {
-//           areMatchesValid = false;
-//           break;
-//         }
-
-//         //if there's more than one of the same receiver, it's invalid
-//         if (
-//           matches.filter((m) => m.receiver.name === match.receiver.name)
-//             .length > 1
-//         ) {
-//           areMatchesValid = false;
-//           break;
-//         }
-
-//         if (rules.preventCircularGifting) {
-//           //logic
-//           // if ()
-//         }
-
-//         if (rules.preventSameHousehold) {
-//           if (
-//             match.giver.household !== households[0] ||
-//             match.receiver.household !== households[0]
-//           ) {
-//             if (match.giver.household === match.receiver.household) {
-//               areMatchesValid = false;
-//               break;
-//             }
-//           }
-//         }
-
-//         if (rules.preventSameGender) {
-//           if (
-//             match.giver.gender !== this.genders[0] ||
-//             match.receiver.gender !== this.genders[0]
-//           ) {
-//             if (match.giver.gender === match.receiver.gender) {
-//               areMatchesValid = false;
-//               break;
-//             }
-//           }
-//         }
-
-//         if (rules.preventSameAgeGroup) {
-//           //logic
-//         }
-//       }
-//     }
-
-//     return areMatchesValid;
-//   }
-
-//   shufflePeople(people: Person[]): Person[] {
-//     let shuffledPeople = [...people];
-
-//     for (let i = shuffledPeople.length - 1; i > 0; i--) {
-//       const j = Math.floor(Math.random() * (i + 1));
-//       [shuffledPeople[i], shuffledPeople[j]] = [
-//         shuffledPeople[j],
-//         shuffledPeople[i],
-//       ];
-//     }
-
-//     return shuffledPeople;
-//   }
-
-//   /
-
-//   //returns maximum number of matches from M to N
-
-// }
