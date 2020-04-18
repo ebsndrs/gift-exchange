@@ -1,14 +1,15 @@
-import React, { useState, useEffect } from "react";
-import Households from "./components/Households";
-import PeopleList from "./components/People";
-import RulesList from "./components/Rules";
-import MatchesList from "./components/Matches";
-import { Rules, Person, Match } from "./types";
-import MatchHelper, { generatePermutation } from "./matching";
+import React, { useState, useEffect } from 'react';
+import Households from './components/Households';
+import PeopleList from './components/People';
+import Matches from './components/Matches';
+import { default as RulesComponent } from './components/Rules';
+import { Rules, Person, Match } from './types';
+import { getMatches, nFactorial, nFactorialDivN, getPermutation } from './matching';
+import './tailwind.css';
 
 export default function App() {
-  const genders = ["None", "Male", "Female", "Other"];
-  const matchHelper = new MatchHelper(genders);
+  const genders = ['None', 'Male', 'Female', 'Other'];
+  // const matchHelper = new MatchHelper(genders);
 
   const [rules, setRules] = useState<Rules>({
     preventCircularGifting: false,
@@ -16,18 +17,28 @@ export default function App() {
     preventSameGender: false,
     preventSameAgeGroup: false,
   });
-  const [people, setPeople] = useState<Person[]>([]);
+  const [people, setPeople] = useState<Person[]>([
+    { name: 'Ed', household: 'None', gender: 'None', age: 0 },
+    { name: 'Heather', household: 'None', gender: 'None', age: 0 },
+    { name: 'James', household: 'None', gender: 'None', age: 0 },
+    { name: 'JJ', household: 'None', gender: 'None', age: 0 },
+    { name: 'Xiaoli', household: 'None', gender: 'None', age: 0 },
+    { name: 'Alice', household: 'None', gender: 'None', age: 0 },
+    { name: 'Isabel', household: 'None', gender: 'None', age: 0 },
+    { name: 'Mary', household: 'None', gender: 'None', age: 0 },
+    { name: 'Clara', household: 'None', gender: 'None', age: 0 },
+    // { name: 'Beth', household: 'None', gender: 'None', age: 0 },
+  ]);
   const [households, setHouseholds] = useState<string[]>([]);
-  const [matches, setMatches] = useState<Match[]>([]);
+  const [matches, setMatches] = useState<Match[][]>([]);
   const [matchPermutation, setMatchPermutation] = useState(0);
   const [areMatchesLoading, setAreMatchesLoading] = useState(false);
   const [areMatchesValid, setAreMatchesValid] = useState(false);
+  const [permutations, setPermutations] = useState<Person[][]>([]);
 
   const toggleRule = (name: string) => {
-    setRules({
-      ...rules,
-      [name]: ![name],
-    });
+    rules[name] = !rules[name];
+    setRules({ ...rules });
   };
 
   const addPerson = (person: Person) => {
@@ -37,7 +48,7 @@ export default function App() {
 
     const isValid =
       person.name !== undefined &&
-      person.name !== "" &&
+      person.name !== '' &&
       !people.some((p) => p.name === person.name);
 
     if (isValid) {
@@ -63,7 +74,7 @@ export default function App() {
 
     const isValid =
       household !== undefined &&
-      household !== "" &&
+      household !== '' &&
       !households.includes(household);
 
     if (isValid) {
@@ -90,75 +101,116 @@ export default function App() {
     }
   };
 
+  const generatePermutations = () => {
+    let permutations: Person[][] = [];
+
+    for (let i = 0; i < nFactorial[people.length]; i++) {
+      const p = getPermutation(people, i);
+
+      permutations.push(p);
+    }
+
+    setPermutations(permutations);
+  };
+
   const generateMatches = () => {
     if (people.length < 2) {
       setAreMatchesValid(false);
     } else {
       setAreMatchesLoading(true);
 
-      let shuffledPeople = generatePermutation(people, matchPermutation);
-      if (shuffledPeople === undefined) {
-        setMatchPermutation(0);
-        shuffledPeople = generatePermutation(people, matchPermutation);
-      } else {
-        setMatchPermutation(matchPermutation + 1);
+      let temp2: Match[][] = [];
+
+      for (let i = 0; i < nFactorialDivN[people.length]; i++) {
+        const temp = getMatches(people, i, households, rules);
+
+        temp2.push(temp);
       }
 
-      let adjacencyMatrix = matchHelper.buildAdjacencyMatrix(
-        shuffledPeople,
-        households,
-        rules
-      );
-      let maxMatches = matchHelper.maximumBipartiteMatching(
-        adjacencyMatrix,
-        people.length,
-        people.length
-      );
+      setMatches(temp2);
+      //   let shuffledPeople = generatePermutation(people, matchPermutation);
+      //   if (shuffledPeople === undefined) {
+      //     setMatchPermutation(0);
+      //     shuffledPeople = generatePermutation(people, matchPermutation);
+      //   } else {
+      //     setMatchPermutation(matchPermutation + 1);
+      //   }
 
-      if (maxMatches === people.length) {
-        let matches = matchHelper.generateMatches(
-          shuffledPeople,
-          adjacencyMatrix
-        );
+      //   let adjacencyMatrix = matchHelper.buildAdjacencyMatrix(
+      //     shuffledPeople,
+      //     households,
+      //     rules
+      //   );
+      //   let maxMatches = matchHelper.maximumBipartiteMatching(
+      //     adjacencyMatrix,
+      //     people.length,
+      //     people.length
+      //   );
 
-        while (
-          !matchHelper.areMatchesValid(
-            people.length,
-            matches,
-            households,
-            rules
-          )
-        ) {
-          shuffledPeople = matchHelper.shufflePeople(people);
-          adjacencyMatrix = matchHelper.buildAdjacencyMatrix(
-            shuffledPeople,
-            households,
-            rules
-          );
-          matches = matchHelper.generateMatches(
-            shuffledPeople,
-            adjacencyMatrix
-          );
-        }
+      //   if (maxMatches === people.length) {
+      //     let matches = matchHelper.generateMatches(
+      //       shuffledPeople,
+      //       adjacencyMatrix
+      //     );
 
-        matches.sort((firstMatch, secondMatch) =>
-          firstMatch.giver.name.localeCompare(secondMatch.giver.name)
-        );
-        setMatches(matches);
-        setAreMatchesLoading(false);
-        setAreMatchesValid(true);
-      } else {
-        setMatches([]);
-        setAreMatchesLoading(false);
-        setAreMatchesValid(false);
-      }
+      //     while (
+      //       !matchHelper.areMatchesValid(
+      //         people.length,
+      //         matches,
+      //         households,
+      //         rules
+      //       )
+      //     ) {
+      //       shuffledPeople = matchHelper.shufflePeople(people);
+      //       adjacencyMatrix = matchHelper.buildAdjacencyMatrix(
+      //         shuffledPeople,
+      //         households,
+      //         rules
+      //       );
+      //       matches = matchHelper.generateMatches(
+      //         shuffledPeople,
+      //         adjacencyMatrix
+      //       );
+      //     }
+
+      //     matches.sort((firstMatch, secondMatch) =>
+      //       firstMatch.giver.name.localeCompare(secondMatch.giver.name)
+      //     );
+      //     setMatches(matches);
+      //     setAreMatchesLoading(false);
+      //     setAreMatchesValid(true);
+      //   } else {
+      //     setMatches([]);
+      //     setAreMatchesLoading(false);
+      //     setAreMatchesValid(false);
+      //   }
     }
   };
 
-  useEffect(generateMatches, [people, households, rules]);
+  useEffect(generateMatches, [people, households, rules, matchPermutation]);
+  useEffect(generatePermutations, [people]);
 
   return (
-    <div className="app">
+    <div className="app mx-64">
+      {/* <RulesComponent rules={rules} toggleRule={toggleRule} /> */}
+      <div>
+        {/* <div>
+          {permutations.map((x, index) => (
+            <div className="mb-4">
+              <h1 className="font-bold">Permutation {index}</h1>
+              {x.map((y) => (
+                <div>{y.name}</div>
+              ))}
+            </div>
+          ))}
+        </div> */}
+        <Matches
+          matches={matches}
+          areMatchesGenerating={false}
+          areMatchesValid={false}
+          regenerateMatches={() => console.log('hi')}
+        />
+      </div>
       {/* <Grid container spacing={3}>
         <Grid item xs={12} md={3}>
           <Card>

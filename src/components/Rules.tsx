@@ -1,72 +1,34 @@
 import React from 'react';
 import { RulesProps } from '../types';
+import RuleToggle from './RuleToggle';
 
-export default function RulesList(props: RulesProps) {
+export default function Rules(props: RulesProps) {
   return (
-    <div></div>
-    // <List subheader={<ListSubheader>Rules</ListSubheader>}>
-    //   {/* <ListItem>
-    //     <ListItemIcon>
-    //       <SyncIcon />
-    //     </ListItemIcon>
-    //     <ListItemText id="switch-list-label-preventCircularGifting" primary="Prevent Circular Gifting" />
-    //     <ListItemSecondaryAction>
-    //       <Switch
-    //         edge="end"
-    //         onChange={(event) => props.changeRule('preventCircularGifting', event.target.checked)}
-    //         checked={props.rules.preventCircularGifting}
-    //       />
-    //     </ListItemSecondaryAction>
-    //   </ListItem> */}
-    //   <ListItem>
-    //     <ListItemIcon>
-    //       <HouseIcon />
-    //     </ListItemIcon>
-    //     <ListItemText
-    //       id="switch-list-label-preventSameHousehold"
-    //       primary="Prevent Same Household"
-    //     />
-    //     <ListItemSecondaryAction>
-    //       <Switch
-    //         edge="end"
-    //         onChange={(event) =>
-    //           props.changeRule("preventSameHousehold", event.target.checked)
-    //         }
-    //         checked={props.rules.preventSameHousehold}
-    //       />
-    //     </ListItemSecondaryAction>
-    //   </ListItem>
-    //   <ListItem>
-    //     <ListItemIcon>
-    //       <WcIcon />
-    //     </ListItemIcon>
-    //     <ListItemText
-    //       id="switch-list-label-preventSameGender"
-    //       primary="Prevent Same Gender"
-    //     />
-    //     <ListItemSecondaryAction>
-    //       <Switch
-    //         edge="end"
-    //         onChange={(event) =>
-    //           props.changeRule("preventSameGender", event.target.checked)
-    //         }
-    //         checked={props.rules.preventSameGender}
-    //       />
-    //     </ListItemSecondaryAction>
-    //   </ListItem>
-    //   {/* <ListItem>
-    //     <ListItemIcon>
-    //       <DateRangeIcon />
-    //     </ListItemIcon>
-    //     <ListItemText id="switch-list-label-preventSameAgeGroup" primary="Prevent Same Age Group" />
-    //     <ListItemSecondaryAction>
-    //       <Switch
-    //         edge="end"
-    //         onChange={(event) => props.changeRule('preventSameAgeGroup', event.target.checked)}
-    //         checked={props.rules.preventSameAgeGroup}
-    //       />
-    //     </ListItemSecondaryAction>
-    //   </ListItem> */}
-    // </List>
+    <div className="w-64">
+      <RuleToggle
+        display="Prevent Circular Giving"
+        index="preventCircularGifting"
+        toggled={props.rules.preventCircularGifting}
+        toggle={props.toggleRule}
+      />
+      <RuleToggle
+        display="Prevent Same Household"
+        index="preventSameHousehold"
+        toggled={props.rules.preventSameHousehold}
+        toggle={props.toggleRule}
+      />
+      <RuleToggle
+        display="Prevent Same Gender"
+        index="preventSameGender"
+        toggled={props.rules.preventSameGender}
+        toggle={props.toggleRule}
+      />
+      <RuleToggle
+        display="Prevent Same Age Group"
+        index="preventSameAgeGroup"
+        toggled={props.rules.preventSameAgeGroup}
+        toggle={props.toggleRule}
+      />
+    </div>
   );
 }

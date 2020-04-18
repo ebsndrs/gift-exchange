@@ -1,9 +1,32 @@
-import React from "react";
-import { MatchesProps } from "../types";
+import React from 'react';
+import { MatchesProps } from '../types';
+import { getPermutation } from '../matching';
 
-export default function MatchesList(props: MatchesProps) {
+export default function Matches(props: MatchesProps) {
+  let temp = [
+    ...new Set(
+      props.matches.map((x) =>
+        x.map((y) => y.giver.name + ' gives to ' + y.receiver.name).toString()
+      )
+    ),
+  ];
+
+  let temp2 = temp.map((x) => x.split(','));
+
   return (
-    <div></div>
+    <div className="flex mx-64">
+      <div>
+        <h1 className="font-bold">All Matches</h1>
+        {props.matches.map((x, index) => (
+          <div className="mb-4">
+            <h1 className="font-bold">Permutation {index}</h1>
+            {x.map((y) => (
+              <div>{y.giver.name + ' gives to ' + y.receiver.name}</div>
+            ))}
+          </div>
+        ))}
+      </div>
+    </div>
     // <Card>
     //   <CardHeader
     //     title="Matches"
