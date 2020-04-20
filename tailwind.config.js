@@ -8,5 +8,9 @@ module.exports = {
       },
     },
   },
+  variants: {
+    textColor: ['disabled'],
+    cursor: ['disabled'],
+  },
   plugins: [require('@tailwindcss/ui')],
 };

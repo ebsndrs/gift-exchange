@@ -1,3 +1,12 @@
+export interface StateCache {
+  people: Person[];
+  matches: Match[];
+  rules: Rules;
+  matchPermutation: number;
+  areMatchesValid: boolean;
+  invalidMatchesError: string;
+}
+
 export interface Rules {
   [index: string]: boolean;
   preventSameHousehold: boolean;
@@ -28,16 +37,27 @@ export interface RuleToggleProps {
 export interface PeopleProps {
   people: Person[];
   addPerson: (person: Person) => void;
+  editPerson: (string: string, newPerson: Person) => void;
   removePerson: (name: string) => void;
-  resetPeople: () => void;
+  clearPeople: () => void;
+}
+
+export interface PeopleRowProps {
+  people: Person[];
+  households: string[];
+  person: Person;
+  removePerson: (name: string) => void;
+  editPerson: (name: string, newPerson: Person) => void;
 }
 
 export interface MatchesProps {
+  rules: Rules;
   matches: Match[];
-  areMatchesGenerating: boolean;
+  areMatchesLoading: boolean;
   areMatchesValid: boolean;
-  // matchesMessage: string;
-  regenerateMatches: () => void;
+  errorKey: string;
+  toggleRule: (name: string) => void;
+  refreshMatches: () => void;
 }
 
 export interface TransitionProps {

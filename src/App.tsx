@@ -1,8 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useLayoutEffect, useRef } from 'react';
 import People from './components/People';
 import Matches from './components/Matches';
-import { default as RulesComponent } from './components/Rules';
-import { Rules, Person, Match } from './types';
+import { Rules, Person, Match, StateCache } from './types';
 import {
   getMatch,
   getRandomFromZero,
@@ -14,30 +13,50 @@ import {
 import './tailwind.css';
 
 export default function App() {
-  const [people, setPeople] = useState<Person[]>([]);
-  const [rules, setRules] = useState<Rules>({
-    preventSameHousehold: false,
-  });
-  const [matches, setMatches] = useState<Match[]>([]);
-  const [currentMatchPermutation, setCurrentMatchPermutation] = useState(0);
+  const firstRun = useRef(true);
+
+  const localStorageState = localStorage.getItem('state');
+  const parsedState: StateCache =
+    localStorageState !== null
+      ? JSON.parse(localStorageState)
+      : {
+          people: [],
+          matches: [],
+          rules: { preventSameHousehold: false },
+          matchPermutation: 0,
+          areMatchesValid: false,
+          invalidMatchesError: 'LowerThanMinimum',
+        };
+
+  const [people, setPeople] = useState<Person[]>(parsedState.people);
+  const [rules, setRules] = useState<Rules>(parsedState.rules);
+  const [matches, setMatches] = useState<Match[]>(parsedState.matches);
+  const [matchPermutation, setMatchPermutation] = useState(parsedState.matchPermutation);
   const [areMatchesLoading, setAreMatchesLoading] = useState(false);
-  const [areMatchesValidState, setAreMatchesValidState] = useState(false);
-  const [invalidMatchesError, setInvalidMatchesError] = useState('');
+  const [areMatchesValid, setAreMatchesValid] = useState(parsedState.areMatchesValid);
+  const [errorKey, setErrorKey] = useState(parsedState.invalidMatchesError);
 
   const generateMatches = () => {
+    //don't generate matches on initial render. If matches were retrieved
+    //from local storage, we want those to be the state. If no matches were retrieved,
+    //this function wouldn't do anything anyway.
+    if (firstRun.current) {
+      firstRun.current = false;
+      return;
+    }
+
     setAreMatchesLoading(true);
 
     if (people.length < 2) {
       setMatches([]);
-      setAreMatchesValidState(false);
-      setInvalidMatchesError('LowerThanMinimum');
+      setAreMatchesValid(false);
+      setErrorKey('LowerThanMinimum');
     } else if (people.length > 170) {
       setMatches([]);
-      setAreMatchesValidState(false);
-      setInvalidMatchesError('GreaterThanMaximum');
+      setAreMatchesValid(false);
+      setErrorKey('GreaterThanMaximum');
     } else if (checkIfMatchingIsPossible(people, rules)) {
       const maxPermutations = factorializeN(people.length);
-      const households = [...new Set(people.map((person) => person.household))];
       let isValidMatch = false;
       let newMatches: Match[] = [];
       let random: number = 0;
@@ -45,7 +64,7 @@ export default function App() {
       //brute force it until we find a valid match set
       //the more people, the less likely a collision will occur
       do {
-        random = getRandomFromZero(maxPermutations, [currentMatchPermutation]);
+        random = getRandomFromZero(maxPermutations, [matchPermutation]);
         newMatches = getMatch(random, people, rules);
 
         //the matches must be valid and not be the same as the last generated matches
@@ -60,19 +79,17 @@ export default function App() {
       newMatches.sort((first, second) => first.giver.name.localeCompare(second.giver.name));
 
       setMatches(newMatches);
-      setCurrentMatchPermutation(random);
-      setAreMatchesValidState(true);
-      setInvalidMatchesError('');
+      setMatchPermutation(random);
+      setAreMatchesValid(true);
+      setErrorKey('');
     } else {
       setMatches([]);
-      setAreMatchesValidState(false);
-      setInvalidMatchesError('NoMatch');
+      setAreMatchesValid(false);
+      setErrorKey('NoMatch');
     }
 
     setAreMatchesLoading(false);
   };
-
-  useEffect(generateMatches, [people, rules]);
 
   const toggleRule = (name: string) => {
     rules[name] = !rules[name];
@@ -83,10 +100,23 @@ export default function App() {
     person.name = person.name.trim();
     person.household = person.household.trim();
 
-    const isValid = person.name !== undefined && person.name !== '' && !people.some((p) => p.name === person.name);
+    const isValid = person.name !== '' && !people.some((p) => p.name === person.name);
 
     if (isValid) {
       setPeople([...people, person]);
+    }
+  };
+
+  const editPerson = (name: string, newPerson: Person) => {
+    newPerson.name = newPerson.name.trim();
+    newPerson.household = newPerson.household.trim();
+
+    const isValid = people.filter((p) => p.name === name).length === 1;
+
+    if (isValid) {
+      const index = people.findIndex((p) => p.name === name);
+      people.splice(index, 1, newPerson);
+      setPeople([...people]);
     }
   };
 
@@ -103,14 +133,40 @@ export default function App() {
     setPeople([]);
   };
 
+  const cacheState = () => {
+    const cache: StateCache = {
+      people: people,
+      matches: matches,
+      rules: rules,
+      matchPermutation: matchPermutation,
+      areMatchesValid: areMatchesValid,
+      invalidMatchesError: errorKey,
+    };
+
+    localStorage.setItem('state', JSON.stringify(cache));
+  };
+
+  useEffect(cacheState);
+
+  useLayoutEffect(generateMatches, [people, rules]);
+
   return (
-    <div className="app bg-gray-100 mh-screen sm:flex sm:flex-column justify-center">
-      <People people={people} addPerson={addPerson} removePerson={removePerson} resetPeople={resetPeople} />
+    <div className="app mh-screen sm:flex sm:flex-column justify-center">
+      <People
+        people={people}
+        addPerson={addPerson}
+        editPerson={editPerson}
+        removePerson={removePerson}
+        clearPeople={resetPeople}
+      />
       <Matches
+        rules={rules}
         matches={matches}
-        areMatchesGenerating={false}
-        areMatchesValid={false}
-        regenerateMatches={generateMatches}
+        areMatchesLoading={areMatchesLoading}
+        areMatchesValid={areMatchesValid}
+        errorKey={errorKey}
+        toggleRule={toggleRule}
+        refreshMatches={generateMatches}
       />
     </div>
   );

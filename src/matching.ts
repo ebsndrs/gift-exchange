@@ -1,6 +1,22 @@
 import { Person, Match, Rules } from './types';
 
 /*
+  Gets an error message based on a key
+*/
+export function getMatchingErrorMessage(key: string) {
+  switch (key) {
+    case 'LowerThanMinimum':
+      return 'Add two or more people to get started!';
+    case 'GreaterThanMaximum':
+      return '170 is the maximum amount of participants you can add.';
+    case 'NoMatch':
+      return 'No valid matching set could be generated with your inputs. Change something to try again!';
+    default:
+      return 'Something went wrong. Try reloading the page or resetting the app.';
+  }
+}
+
+/*
   Gets a random integer that is not the prohibited number
 */
 export function getRandomFromZero(max: number, prohibitedNumbers: number[]) {
