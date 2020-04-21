@@ -19,7 +19,7 @@ export default function PeopleRow(props: PeopleRowProps) {
     const shouldEditFormSubmitButtonBeDisabled =
       editForm.name.trim() === '' ||
       (editForm.name === props.person.name && editForm.household === props.person.household) ||
-      props.people.some((p) => p.name === editForm.name.trim());
+      (editForm.name.trim() !== props.person.name && props.people.some((p) => p.name === editForm.name.trim()));
 
     setIsEditFormSubmitButtonDisabled(shouldEditFormSubmitButtonBeDisabled);
   }, [editForm, props.person, props.people]);
