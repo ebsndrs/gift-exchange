@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { MatchesProps } from '../types';
 import RuleToggle from './RuleToggle';
 import { getMatchingErrorMessage } from '../matching';
@@ -36,7 +36,7 @@ export default function Matches(props: MatchesProps) {
   };
 
   return (
-    <div className="mx-2 my-4 bg-white overflow-hidden shadow rounded-lg">
+    <div className="my-4 sm:my-0 bg-white overflow-hidden shadow rounded-lg">
       <a
         className="hidden"
         id="csv-download"
@@ -53,9 +53,10 @@ export default function Matches(props: MatchesProps) {
             <span className="relative z-10 inline-flex shadow-sm">
               <button
                 onClick={props.refreshMatches}
+                disabled={!props.areMatchesValid}
                 title="Refresh matches"
                 type="button"
-                className="-ml-px relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm leading-5 font-medium text-gray-500 hover:text-gray-400 focus:z-10 focus:outline-none focus:border-blue-300 focus:shadow-outline-blue active:bg-gray-100 active:text-gray-500 transition ease-in-out duration-150"
+                className="-ml-px relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm leading-5 font-medium text-gray-500 hover:text-gray-400 focus:z-10 focus:outline-none focus:border-blue-300 focus:shadow-outline-blue active:bg-gray-100 active:text-gray-500 transition ease-in-out duration-150 disabled:text-gray-300 disabled:cursor-not-allowed"
               >
                 <svg fill="currentColor" viewBox="0 0 20 20" className="w-5 h-5">
                   <path
@@ -68,9 +69,10 @@ export default function Matches(props: MatchesProps) {
               <span className="-ml-px relative block">
                 <button
                   onClick={() => setIsExportDropdownVisible(!isExportDropdownVisible)}
+                  disabled={!props.areMatchesValid}
                   title="Export matches"
                   type="button"
-                  className="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm leading-5 font-medium text-gray-500 hover:text-gray-400 focus:z-10 focus:outline-none focus:border-blue-300 focus:shadow-outline-blue active:bg-gray-100 active:text-gray-500 transition ease-in-out duration-150"
+                  className="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm leading-5 font-medium text-gray-500 hover:text-gray-400 focus:z-10 focus:outline-none focus:border-blue-300 focus:shadow-outline-blue active:bg-gray-100 active:text-gray-500 transition ease-in-out duration-150 disabled:text-gray-300 disabled:cursor-not-allowed"
                 >
                   <svg fill="currentColor" viewBox="0 0 20 20" className="w-5 h-5">
                     <path
@@ -93,18 +95,17 @@ export default function Matches(props: MatchesProps) {
                     <div className="rounded-md bg-white shadow-xsleft">
                       <button
                         onClick={copyToClipboard}
-                        className="w-full block px-4 py-2 text-sm leading-5 text-left text-gray-700 hover:bg-gray-100 hover:text-gray-900 focus:outline-none focus:bg-gray-100 focus:text-gray-900"
+                        disabled={props.matches.length === 0}
+                        className="w-full block px-4 py-2 text-sm leading-5 text-left text-gray-700 hover:bg-gray-100 hover:text-gray-900 focus:outline-none focus:bg-gray-100 focus:text-gray-900 disabled:cursor-not-allowed"
                       >
                         Copy to clipboard
                       </button>
                       <button
                         onClick={exportToCsv}
-                        className="w-full block px-4 py-2 text-sm leading-5 text-left text-gray-700 hover:bg-gray-100 hover:text-gray-900 focus:outline-none focus:bg-gray-100 focus:text-gray-900"
+                        disabled={props.matches.length === 0}
+                        className="w-full block px-4 py-2 text-sm leading-5 text-left text-gray-700 hover:bg-gray-100 hover:text-gray-900 focus:outline-none focus:bg-gray-100 focus:text-gray-900 disabled:cursor-not-allowed"
                       >
                         Export to CSV
-                      </button>
-                      <button className="w-full block px-4 py-2 text-sm leading-5 text-left text-gray-700 hover:bg-gray-100 hover:text-gray-900 focus:outline-none focus:bg-gray-100 focus:text-gray-900">
-                        Export to JSON
                       </button>
                     </div>
                   </div>
@@ -159,7 +160,7 @@ export default function Matches(props: MatchesProps) {
             </div>
           </div>
         ) : (
-          <div className="mt-6 w-64 text-sm">
+          <div className="mt-6 w-full text-sm">
             <div className="rounded-md bg-red-50 p-4">
               <div className="flex">
                 <div className="flex-shrink-0">

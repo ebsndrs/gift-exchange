@@ -11,18 +11,22 @@ export default function People(props: PeopleProps) {
   });
   const [isAddButtonDisabled, setIsAddButtonDisabled] = useState(true);
   const [isClearButtonDisabled, setIsClearButtonDisabled] = useState(true);
+  const [isEditFormOpen, setIsEditFormOpen] = useState(false);
 
   useEffect(() => {
     const trimmedName = person.name.trim();
     const trimmedHousehold = person.household.trim();
 
     const shouldAddButtonBeDisabled =
-      trimmedName === '' || props.people.some((p) => p.name === trimmedName) || props.people.length + 1 > 170;
-    const shouldClearButtonBeDisabled = trimmedName === '' && trimmedHousehold === '';
+      trimmedName === '' ||
+      props.people.some((p) => p.name === trimmedName) ||
+      props.people.length + 1 > 170 ||
+      isEditFormOpen;
+    const shouldClearButtonBeDisabled = (trimmedName === '' && trimmedHousehold === '') || isEditFormOpen;
 
     setIsAddButtonDisabled(shouldAddButtonBeDisabled);
     setIsClearButtonDisabled(shouldClearButtonBeDisabled);
-  }, [person, props.people]);
+  }, [person, props.people, isEditFormOpen]);
 
   const clearInput = () => {
     setPerson({
@@ -62,8 +66,12 @@ export default function People(props: PeopleProps) {
     });
   };
 
+  const onEditFormToggled = (state: boolean) => {
+    setIsEditFormOpen(state);
+  };
+
   return (
-    <div className="mx-2 my-4 bg-white overflow-hidden shadow rounded-lg">
+    <div className="my-4 sm:my-0 bg-white overflow-hidden shadow rounded-lg">
       <div className="border-b border-gray-200 px-4 py-5 sm:px-6">
         <div className="-ml-4 -mt-2 flex items-center justify-between flex-wrap sm:flex-no-wrap">
           <div className="ml-4 mt-2">
@@ -72,29 +80,16 @@ export default function People(props: PeopleProps) {
           <div className="ml-4 mt-2 flex-shrink-0">
             <span className="relative z-0 inline-flex shadow-sm">
               <button
-                title="Import"
-                type="button"
-                className="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm leading-5 font-medium text-gray-500 hover:text-gray-400 focus:z-10 focus:outline-none focus:border-blue-300 focus:shadow-outline-blue active:bg-gray-100 active:text-gray-500 transition ease-in-out duration-150"
-              >
-                <svg fill="currentColor" viewBox="0 0 20 20" className="w-5 h-5">
-                  <path
-                    fillRule="evenodd"
-                    d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM6.293 6.707a1 1 0 010-1.414l3-3a1 1 0 011.414 0l3 3a1 1 0 01-1.414 1.414L11 5.414V13a1 1 0 11-2 0V5.414L7.707 6.707a1 1 0 01-1.414 0z"
-                    clipRule="evenodd"
-                  ></path>
-                </svg>
-              </button>
-              <button
                 onClick={props.clearPeople}
-                disabled={props.people.length === 0}
+                disabled={props.people.length === 0 || isEditFormOpen}
                 title="Clear"
                 type="button"
-                className="-ml-px relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm leading-5 font-medium text-gray-500 hover:text-gray-400 focus:z-10 focus:outline-none focus:border-blue-300 focus:shadow-outline-blue active:bg-gray-100 active:text-gray-500 transition ease-in-out duration-150 disabled:text-gray-300 disabled:cursor-not-allowed"
+                className="-ml-px relative inline-flex items-center px-2 py-2 rounded-md border border-gray-300 bg-white text-sm leading-5 font-medium text-gray-500 hover:text-gray-400 focus:z-10 focus:outline-none focus:border-blue-300 focus:shadow-outline-blue active:bg-gray-100 active:text-gray-500 transition ease-in-out duration-150 disabled:text-gray-300 disabled:cursor-not-allowed"
               >
                 <svg fill="currentColor" viewBox="0 0 20 20" className="w-5 h-5">
                   <path
                     fillRule="evenodd"
-                    d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
+                    d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z"
                     clipRule="evenodd"
                   ></path>
                 </svg>
@@ -178,33 +173,39 @@ export default function People(props: PeopleProps) {
         </div>
         <div className="mt-6 flex flex-col">
           <div className="-my-2 py-2 overflow-x-auto sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8">
-            <div className="align-middle inline-block min-w-full shadow overflow-hidden sm:rounded-lg border-b border-gray-200">
-              <table className="min-w-full">
-                <thead>
-                  <tr>
-                    <th className="px-6 py-3 border-b border-gray-200 bg-gray-50 text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider">
-                      Name
-                    </th>
-                    <th className="pl-6 py-3 border-b border-gray-200 bg-gray-50 text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider">
-                      Household
-                    </th>
-                    <th className="px-6 py-3 border-b border-gray-200 bg-gray-50"></th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {props.people.map((person) => (
-                    <PeopleRow
-                      key={person.name}
-                      person={person}
-                      people={props.people}
-                      households={households}
-                      removePerson={props.removePerson}
-                      editPerson={props.editPerson}
-                    />
-                  ))}
-                </tbody>
-              </table>
-            </div>
+            {props.people.length > 0 ? (
+              <div className="align-middle inline-block min-w-full shadow overflow-hidden sm:rounded-lg border-b border-gray-200">
+                <table className="min-w-full">
+                  <thead>
+                    <tr>
+                      <th className="px-6 py-3 border-b border-gray-200 bg-gray-50 text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider">
+                        Name
+                      </th>
+                      <th className="pl-6 py-3 border-b border-gray-200 bg-gray-50 text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider">
+                        Household
+                      </th>
+                      <th className="px-6 py-3 border-b border-gray-200 bg-gray-50"></th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {props.people.map((person) => (
+                      <PeopleRow
+                        key={person.name}
+                        person={person}
+                        people={props.people}
+                        households={households}
+                        isOtherEditFormActive={isEditFormOpen}
+                        removePerson={props.removePerson}
+                        editPerson={props.editPerson}
+                        onIsEditFormToggled={onEditFormToggled}
+                      />
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            ) : (
+              <div className="py-6 text-center">Once you start adding participants, they'll appear here.</div>
+            )}
           </div>
         </div>
       </div>

@@ -26,16 +26,19 @@ export default function PeopleRow(props: PeopleRowProps) {
 
   const activateEditForm = () => {
     setIsEditFormActive(true);
+    props.onIsEditFormToggled(true);
   };
 
   const submitEditForm = () => {
     props.editPerson(props.person.name, editForm);
     setIsEditFormActive(false);
+    props.onIsEditFormToggled(false);
   };
 
   const cancelEditForm = () => {
     setEditForm(props.person);
     setIsEditFormActive(false);
+    props.onIsEditFormToggled(false);
   };
 
   const changeName = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -143,9 +146,10 @@ export default function PeopleRow(props: PeopleRowProps) {
             <button
               id="edit-person-button"
               onClick={activateEditForm}
+              disabled={props.isOtherEditFormActive}
               title="Edit"
               type="button"
-              className="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm leading-5 font-medium text-gray-500 hover:text-gray-400 focus:z-10 focus:outline-none focus:border-blue-300 focus:shadow-outline-blue active:bg-gray-100 active:text-gray-500 transition ease-in-out duration-150"
+              className="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm leading-5 font-medium text-gray-500 hover:text-gray-400 focus:z-10 focus:outline-none focus:border-blue-300 focus:shadow-outline-blue active:bg-gray-100 active:text-gray-500 transition ease-in-out duration-150 disabled:text-gray-300 disabled:cursor-not-allowed"
             >
               <svg fill="currentColor" viewBox="0 0 20 20" className="w-5 h-5">
                 <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z"></path>
@@ -154,9 +158,10 @@ export default function PeopleRow(props: PeopleRowProps) {
             <button
               id="remove-person-button"
               onClick={() => props.removePerson(props.person.name)}
+              disabled={props.isOtherEditFormActive}
               title="Remove"
               type="button"
-              className="-ml-px relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm leading-5 font-medium text-gray-500 hover:text-gray-400 focus:z-10 focus:outline-none focus:border-blue-300 focus:shadow-outline-blue active:bg-gray-100 active:text-gray-500 transition ease-in-out duration-150"
+              className="-ml-px relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm leading-5 font-medium text-gray-500 hover:text-gray-400 focus:z-10 focus:outline-none focus:border-blue-300 focus:shadow-outline-blue active:bg-gray-100 active:text-gray-500 transition ease-in-out duration-150 disabled:text-gray-300 disabled:cursor-not-allowed"
             >
               <svg fill="currentColor" viewBox="0 0 20 20" className="w-5 h-5">
                 <path

@@ -46,8 +46,10 @@ export interface PeopleRowProps {
   people: Person[];
   households: string[];
   person: Person;
+  isOtherEditFormActive: boolean;
   removePerson: (name: string) => void;
   editPerson: (name: string, newPerson: Person) => void;
+  onIsEditFormToggled: (state: boolean) => void;
 }
 
 export interface MatchesProps {
