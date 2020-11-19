@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState } from 'react';
 import { MatchesProps } from '../types';
 import RuleToggle from './RuleToggle';
 import { getMatchingErrorMessage } from '../matching';
@@ -38,12 +38,13 @@ export default function Matches(props: MatchesProps) {
   return (
     <div className="my-4 sm:my-0 bg-white overflow-hidden shadow rounded-lg">
       <a
-        className="hidden"
+        className="sr-only"
         id="csv-download"
         href={`data:text/csv;charset=utf-8,${encodeURI(encodeCsv())}`}
         download="gift_exchange.csv"
         target="_blank"
-      ></a>
+        rel="noopener noreferrer"
+      >Download Matches as CSV</a>
       <div className="border-b border-gray-200 px-4 py-5 sm:px-6">
         <div className="-ml-4 -mt-2 flex items-center justify-between flex-wrap sm:flex-no-wrap">
           <div className="ml-4 mt-2">

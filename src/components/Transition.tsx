@@ -17,24 +17,24 @@ export default function Transition(props: TransitionProps) {
       addEndListener={(node, done) => {
         node.addEventListener('transitionend', done, false);
       }}
-      onEnter={(node) => {
+      onEnter={(node: HTMLElement) => {
         node.classList.add(...enterClasses, ...enterFromClasses);
       }}
-      onEntering={(node) => {
+      onEntering={(node: HTMLElement) => {
         node.classList.remove(...enterFromClasses);
         node.classList.add(...enterToClasses);
       }}
-      onEntered={(node) => {
+      onEntered={(node: HTMLElement) => {
         node.classList.remove(...enterToClasses, ...enterClasses);
       }}
-      onExit={(node) => {
+      onExit={(node: HTMLElement) => {
         node.classList.add(...leaveClasses, ...leaveFromClasses);
       }}
-      onExiting={(node) => {
+      onExiting={(node: HTMLElement) => {
         node.classList.remove(...leaveFromClasses);
         node.classList.add(...leaveToClasses);
       }}
-      onExited={(node) => {
+      onExited={(node: HTMLElement) => {
         node.classList.remove(...leaveToClasses, ...leaveClasses);
       }}
     >
