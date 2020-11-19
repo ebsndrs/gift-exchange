@@ -1,11 +1,11 @@
 self.__precacheManifest = (self.__precacheManifest || []).concat([
   {
-    "revision": "22c168d0c578896de8202ea802dc4109",
+    "revision": "df3bc4408545ed7746f2365008ef6323",
     "url": "/gift-exchange/index.html"
   },
   {
-    "revision": "3e9b1e7540b9187b08ad",
-    "url": "/gift-exchange/static/css/main.55409c6f.chunk.css"
+    "revision": "bbb9b6355f1849cbaa81",
+    "url": "/gift-exchange/static/css/main.fbe12fd9.chunk.css"
   },
   {
     "revision": "a000ccc2abdef762e7d9",
@@ -16,8 +16,8 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "/gift-exchange/static/js/2.11d10e43.chunk.js.LICENSE.txt"
   },
   {
-    "revision": "3e9b1e7540b9187b08ad",
-    "url": "/gift-exchange/static/js/main.2a6d211a.chunk.js"
+    "revision": "bbb9b6355f1849cbaa81",
+    "url": "/gift-exchange/static/js/main.10f50f1b.chunk.js"
   },
   {
     "revision": "5405fe5db9e91eed78ae",
