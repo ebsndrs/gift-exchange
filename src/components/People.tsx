@@ -1,13 +1,15 @@
-import React, { useState, useEffect } from 'react';
-import { PeopleProps, Person } from '../types';
-import PeopleRow from './PeopleRow';
+import React, { useState, useEffect } from "react";
+import { PeopleProps, Person } from "../types";
+import PeopleRow from "./PeopleRow";
 
 export default function People(props: PeopleProps) {
-  const households = [...new Set(props.people.map((person) => person.household))];
+  const households = [
+    ...new Set(props.people.map((person) => person.household)),
+  ];
 
   const [person, setPerson] = useState<Person>({
-    name: '',
-    household: '',
+    name: "",
+    household: "",
   });
   const [isAddButtonDisabled, setIsAddButtonDisabled] = useState(true);
   const [isClearButtonDisabled, setIsClearButtonDisabled] = useState(true);
@@ -18,11 +20,12 @@ export default function People(props: PeopleProps) {
     const trimmedHousehold = person.household.trim();
 
     const shouldAddButtonBeDisabled =
-      trimmedName === '' ||
+      trimmedName === "" ||
       props.people.some((p) => p.name === trimmedName) ||
       props.people.length + 1 > 170 ||
       isEditFormOpen;
-    const shouldClearButtonBeDisabled = (trimmedName === '' && trimmedHousehold === '') || isEditFormOpen;
+    const shouldClearButtonBeDisabled =
+      (trimmedName === "" && trimmedHousehold === "") || isEditFormOpen;
 
     setIsAddButtonDisabled(shouldAddButtonBeDisabled);
     setIsClearButtonDisabled(shouldClearButtonBeDisabled);
@@ -30,12 +33,14 @@ export default function People(props: PeopleProps) {
 
   const clearInput = () => {
     setPerson({
-      name: '',
-      household: '',
+      name: "",
+      household: "",
     });
   };
 
-  const changeName = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const changeName = (
+    event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
     setPerson({
       ...person,
       name: event.target.value,
@@ -46,11 +51,13 @@ export default function People(props: PeopleProps) {
     if (event.charCode === 13 && !isAddButtonDisabled) {
       event.preventDefault();
       addPerson();
-      document.getElementById('name')?.focus();
+      document.getElementById("name")?.focus();
     }
   };
 
-  const changeHousehold = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const changeHousehold = (
+    event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
     setPerson({
       ...person,
       household: event.target.value,
@@ -61,8 +68,8 @@ export default function People(props: PeopleProps) {
     props.addPerson(person);
 
     setPerson({
-      name: '',
-      household: '',
+      name: "",
+      household: "",
     });
   };
 
@@ -75,7 +82,9 @@ export default function People(props: PeopleProps) {
       <div className="border-b border-gray-200 px-4 py-5 sm:px-6">
         <div className="-ml-4 -mt-2 flex items-center justify-between flex-wrap sm:flex-no-wrap">
           <div className="ml-4 mt-2">
-            <h1 className="text-lg leading-6 font-medium text-gray-900">Participants</h1>
+            <h1 className="text-lg leading-6 font-medium text-gray-900">
+              Participants
+            </h1>
           </div>
           <div className="ml-4 mt-2 flex-shrink-0">
             <span className="relative z-0 inline-flex shadow-sm">
@@ -86,7 +95,11 @@ export default function People(props: PeopleProps) {
                 type="button"
                 className="-ml-px relative inline-flex items-center px-2 py-2 rounded-md border border-gray-300 bg-white text-sm leading-5 font-medium text-gray-500 hover:text-gray-400 focus:z-10 focus:outline-none focus:border-blue-300 focus:shadow-outline-blue active:bg-gray-100 active:text-gray-500 transition ease-in-out duration-150 disabled:text-gray-300 disabled:cursor-not-allowed"
               >
-                <svg fill="currentColor" viewBox="0 0 20 20" className="w-5 h-5">
+                <svg
+                  fill="currentColor"
+                  viewBox="0 0 20 20"
+                  className="w-5 h-5"
+                >
                   <path
                     fillRule="evenodd"
                     d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z"
@@ -106,11 +119,12 @@ export default function People(props: PeopleProps) {
             </label>
             <div className="mt-1 relative rounded-md shadow-sm">
               <input
+                type="text"
                 value={person.name}
                 onChange={(e) => changeName(e)}
                 onKeyPress={(e) => pressInputKey(e)}
                 id="name"
-                className="form-input block w-full sm:text-sm sm:leading-5"
+                className="max-w-lg block w-full shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:max-w-xs sm:text-sm border-gray-300 rounded-md"
                 placeholder="Name"
               />
             </div>
@@ -121,12 +135,13 @@ export default function People(props: PeopleProps) {
             </label>
             <div className="mt-1 relative rounded-md shadow-sm">
               <input
+                type="text"
                 value={person.household}
                 onChange={(e) => changeHousehold(e)}
                 onKeyPress={(e) => pressInputKey(e)}
                 id="household"
                 list="households"
-                className="form-input block w-full sm:text-sm sm:leading-5"
+                className="max-w-lg block w-full shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:max-w-xs sm:text-sm border-gray-300 rounded-md"
                 placeholder="Household"
               />
               <datalist id="households">
@@ -145,7 +160,11 @@ export default function People(props: PeopleProps) {
                 type="button"
                 className="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm leading-5 font-medium text-gray-500 hover:text-gray-400 focus:z-10 focus:outline-none focus:border-blue-300 focus:shadow-outline-blue active:bg-gray-100 active:text-gray-500 transition ease-in-out duration-150 disabled:text-gray-300 disabled:cursor-not-allowed"
               >
-                <svg fill="currentColor" viewBox="0 0 20 20" className="w-5 h-5">
+                <svg
+                  fill="currentColor"
+                  viewBox="0 0 20 20"
+                  className="w-5 h-5"
+                >
                   <path
                     fillRule="evenodd"
                     d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
@@ -160,7 +179,11 @@ export default function People(props: PeopleProps) {
                 type="button"
                 className="-ml-px relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm leading-5 font-medium text-gray-500 hover:text-gray-400 focus:z-10 focus:outline-none focus:border-blue-300 focus:shadow-outline-blue active:bg-gray-100 active:text-gray-500 transition ease-in-out duration-150 disabled:text-gray-300 disabled:cursor-not-allowed"
               >
-                <svg fill="currentColor" viewBox="0 0 20 20" className="w-5 h-5">
+                <svg
+                  fill="currentColor"
+                  viewBox="0 0 20 20"
+                  className="w-5 h-5"
+                >
                   <path
                     fillRule="evenodd"
                     d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z"
@@ -204,7 +227,9 @@ export default function People(props: PeopleProps) {
                 </table>
               </div>
             ) : (
-              <div className="py-6 text-center">Once you start adding participants, they'll appear here.</div>
+              <div className="py-6 text-center">
+                Once you start adding participants, they'll appear here.
+              </div>
             )}
           </div>
         </div>

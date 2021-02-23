@@ -1,14 +1,17 @@
-import React, { useState, useEffect } from 'react';
-import { PeopleRowProps } from '../types';
+import React, { useState, useEffect } from "react";
+import { PeopleRowProps } from "../types";
 
 export default function PeopleRow(props: PeopleRowProps) {
   const [isEditFormActive, setIsEditFormActive] = useState(false);
   const [editForm, setEditForm] = useState(props.person);
-  const [isEditFormSubmitButtonDisabled, setIsEditFormSubmitButtonDisabled] = useState(true);
+  const [
+    isEditFormSubmitButtonDisabled,
+    setIsEditFormSubmitButtonDisabled,
+  ] = useState(true);
 
   useEffect(() => {
     if (isEditFormActive) {
-      const input = document.getElementById('edit-name') as HTMLInputElement;
+      const input = document.getElementById("edit-name") as HTMLInputElement;
 
       input?.focus();
       input?.setSelectionRange(input.value.length, input.value.length);
@@ -17,9 +20,11 @@ export default function PeopleRow(props: PeopleRowProps) {
 
   useEffect(() => {
     const shouldEditFormSubmitButtonBeDisabled =
-      editForm.name.trim() === '' ||
-      (editForm.name === props.person.name && editForm.household === props.person.household) ||
-      (editForm.name.trim() !== props.person.name && props.people.some((p) => p.name === editForm.name.trim()));
+      editForm.name.trim() === "" ||
+      (editForm.name === props.person.name &&
+        editForm.household === props.person.household) ||
+      (editForm.name.trim() !== props.person.name &&
+        props.people.some((p) => p.name === editForm.name.trim()));
 
     setIsEditFormSubmitButtonDisabled(shouldEditFormSubmitButtonBeDisabled);
   }, [editForm, props.person, props.people]);
@@ -41,14 +46,18 @@ export default function PeopleRow(props: PeopleRowProps) {
     props.onIsEditFormToggled(false);
   };
 
-  const changeName = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const changeName = (
+    event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
     setEditForm({
       ...editForm,
       name: event.target.value,
     });
   };
 
-  const changeHousehold = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const changeHousehold = (
+    event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
     setEditForm({
       ...editForm,
       household: event.target.value,
@@ -70,11 +79,12 @@ export default function PeopleRow(props: PeopleRowProps) {
         </label>
         <div className="relative rounded-md shadow-sm">
           <input
+            type="text"
             id="edit-name"
             value={editForm.name}
             onChange={(e) => changeName(e)}
             onKeyPress={(e) => pressInputKey(e)}
-            className="form-input block w-full sm:text-sm sm:leading-5"
+            className="max-w-lg block w-full shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:max-w-xs sm:text-sm border-gray-300 rounded-md"
             placeholder="Name"
           />
         </div>
@@ -85,12 +95,13 @@ export default function PeopleRow(props: PeopleRowProps) {
         </label>
         <div className="relative rounded-md shadow-sm">
           <input
+            type="text"
             value={editForm.household}
             onChange={(e) => changeHousehold(e)}
             onKeyPress={(e) => pressInputKey(e)}
             id="edit-household"
             list="households"
-            className="form-input block w-full sm:text-sm sm:leading-5"
+            className="max-w-lg block w-full shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:max-w-xs sm:text-sm border-gray-300 rounded-md"
             placeholder="Household"
           />
           <datalist id="households">
@@ -138,8 +149,12 @@ export default function PeopleRow(props: PeopleRowProps) {
     </tr>
   ) : (
     <tr className="bg-white">
-      <td className="px-6 py-4 whitespace-no-wrap text-sm leading-5 font-medium text-gray-900">{props.person.name}</td>
-      <td className="px-6 py-4 whitespace-no-wrap text-sm leading-5 text-gray-500">{props.person.household}</td>
+      <td className="px-6 py-4 whitespace-no-wrap text-sm leading-5 font-medium text-gray-900">
+        {props.person.name}
+      </td>
+      <td className="px-6 py-4 whitespace-no-wrap text-sm leading-5 text-gray-500">
+        {props.person.household}
+      </td>
       <td>
         <div className="flex-shrink-0 text-right">
           <span className="relative z-0 inline-flex shadow-sm">
