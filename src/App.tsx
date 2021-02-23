@@ -10,7 +10,6 @@ import {
   factorializeN,
   validateMatches,
 } from './matching';
-import './tailwind.css';
 
 export default function App() {
   const firstRun = useRef(true);
