@@ -1,6 +1,6 @@
-import React from 'react';
-import { RulesProps } from '../types';
-import RuleToggle from './RuleToggle';
+import React from "react";
+import { RulesProps } from "../types";
+import RuleToggle from "./RuleToggle";
 
 export default function Rules(props: RulesProps) {
   return (

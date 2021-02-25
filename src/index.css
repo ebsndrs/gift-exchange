@@ -3,7 +3,7 @@
 @tailwind components;
 
 .loader {
-  border-top-color: theme('colors.indigo.600') !important;
+  border-top-color: theme("colors.indigo.600") !important;
   -webkit-animation: spinner 1s linear infinite;
   animation: spinner 1s linear infinite;
 }

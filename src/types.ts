@@ -70,5 +70,5 @@ export interface TransitionProps {
   leave: string;
   leaveFrom: string;
   leaveTo: string;
-  children: any;
+  children: React.ReactNode;
 }

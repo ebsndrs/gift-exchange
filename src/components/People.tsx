@@ -228,7 +228,7 @@ export default function People(props: PeopleProps) {
               </div>
             ) : (
               <div className="py-6 text-center">
-                Once you start adding participants, they'll appear here.
+                Once you start adding participants, they&apos;ll appear here.
               </div>
             )}
           </div>

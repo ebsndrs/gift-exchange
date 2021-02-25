@@ -1,21 +1,21 @@
-import React from 'react';
-import { CSSTransition } from 'react-transition-group';
-import { TransitionProps } from '../types';
+import React from "react";
+import { CSSTransition } from "react-transition-group";
+import { TransitionProps } from "../types";
 
 export default function Transition(props: TransitionProps) {
-  const enterClasses = props.enter.split(' ');
-  const enterFromClasses = props.enterFrom.split(' ');
-  const enterToClasses = props.enterTo.split(' ');
-  const leaveClasses = props.leave.split(' ');
-  const leaveFromClasses = props.leaveFrom.split(' ');
-  const leaveToClasses = props.leaveTo.split(' ');
+  const enterClasses = props.enter.split(" ");
+  const enterFromClasses = props.enterFrom.split(" ");
+  const enterToClasses = props.enterTo.split(" ");
+  const leaveClasses = props.leave.split(" ");
+  const leaveFromClasses = props.leaveFrom.split(" ");
+  const leaveToClasses = props.leaveTo.split(" ");
 
   return (
     <CSSTransition
       unmountOnExit
       in={props.show}
       addEndListener={(node, done) => {
-        node.addEventListener('transitionend', done, false);
+        node.addEventListener("transitionend", done, false);
       }}
       onEnter={(node: HTMLElement) => {
         node.classList.add(...enterClasses, ...enterFromClasses);

@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
-import { MatchesProps } from '../types';
-import RuleToggle from './RuleToggle';
-import { getMatchingErrorMessage } from '../matching';
-import Spinner from './Spinner';
-import Transition from './Transition';
+import React, { useState } from "react";
+import { MatchesProps } from "../types";
+import RuleToggle from "./RuleToggle";
+import { getMatchingErrorMessage } from "../matching";
+import Spinner from "./Spinner";
+import Transition from "./Transition";
 
 export default function Matches(props: MatchesProps) {
   const [isExportDropdownVisible, setIsExportDropdownVisible] = useState(false);
@@ -11,7 +11,7 @@ export default function Matches(props: MatchesProps) {
   const copyToClipboard = async () => {
     const clipboardString = props.matches
       .map((match) => `${match.giver.name} gives to ${match.receiver.name}.`)
-      .join('\n');
+      .join("\n");
 
     await navigator.clipboard.writeText(clipboardString);
 
@@ -19,15 +19,17 @@ export default function Matches(props: MatchesProps) {
   };
 
   const exportToCsv = () => {
-    const hiddenLink = document.getElementById('csv-download') as HTMLAnchorElement;
+    const hiddenLink = document.getElementById(
+      "csv-download"
+    ) as HTMLAnchorElement;
     hiddenLink.click();
   };
 
   const encodeCsv = () => {
-    let csv = 'Giver,Receiver\n';
+    let csv = "Giver,Receiver\n";
     props.matches.forEach((match) => {
-      const giverName = match.giver.name.replace(',', '\\,');
-      const receiverName = match.receiver.name.replace(',', '\\,');
+      const giverName = match.giver.name.replace(",", "\\,");
+      const receiverName = match.receiver.name.replace(",", "\\,");
 
       csv += `${giverName},${receiverName}\n`;
     });
@@ -44,11 +46,15 @@ export default function Matches(props: MatchesProps) {
         download="gift_exchange.csv"
         target="_blank"
         rel="noopener noreferrer"
-      >Download Matches as CSV</a>
+      >
+        Download Matches as CSV
+      </a>
       <div className="border-b border-gray-200 px-4 py-5 sm:px-6">
         <div className="-ml-4 -mt-2 flex items-center justify-between flex-wrap sm:flex-no-wrap">
           <div className="ml-4 mt-2">
-            <h1 className="text-lg leading-6 font-medium text-gray-900">Results</h1>
+            <h1 className="text-lg leading-6 font-medium text-gray-900">
+              Results
+            </h1>
           </div>
           <div className="ml-4 mt-2 flex-shrink-0">
             <span className="relative z-10 inline-flex shadow-sm">
@@ -59,7 +65,11 @@ export default function Matches(props: MatchesProps) {
                 type="button"
                 className="-ml-px relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm leading-5 font-medium text-gray-500 hover:text-gray-400 focus:z-10 focus:outline-none focus:border-blue-300 focus:shadow-outline-blue active:bg-gray-100 active:text-gray-500 transition ease-in-out duration-150 disabled:text-gray-300 disabled:cursor-not-allowed"
               >
-                <svg fill="currentColor" viewBox="0 0 20 20" className="w-5 h-5">
+                <svg
+                  fill="currentColor"
+                  viewBox="0 0 20 20"
+                  className="w-5 h-5"
+                >
                   <path
                     fillRule="evenodd"
                     d="M4 2a1 1 0 011 1v2.101a7.002 7.002 0 0111.601 2.566 1 1 0 11-1.885.666A5.002 5.002 0 005.999 7H9a1 1 0 010 2H4a1 1 0 01-1-1V3a1 1 0 011-1zm.008 9.057a1 1 0 011.276.61A5.002 5.002 0 0014.001 13H11a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0v-2.101a7.002 7.002 0 01-11.601-2.566 1 1 0 01.61-1.276z"
@@ -69,13 +79,19 @@ export default function Matches(props: MatchesProps) {
               </button>
               <span className="-ml-px relative block">
                 <button
-                  onClick={() => setIsExportDropdownVisible(!isExportDropdownVisible)}
+                  onClick={() =>
+                    setIsExportDropdownVisible(!isExportDropdownVisible)
+                  }
                   disabled={!props.areMatchesValid}
                   title="Export matches"
                   type="button"
                   className="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm leading-5 font-medium text-gray-500 hover:text-gray-400 focus:z-10 focus:outline-none focus:border-blue-300 focus:shadow-outline-blue active:bg-gray-100 active:text-gray-500 transition ease-in-out duration-150 disabled:text-gray-300 disabled:cursor-not-allowed"
                 >
-                  <svg fill="currentColor" viewBox="0 0 20 20" className="w-5 h-5">
+                  <svg
+                    fill="currentColor"
+                    viewBox="0 0 20 20"
+                    className="w-5 h-5"
+                  >
                     <path
                       fillRule="evenodd"
                       d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z"
@@ -165,7 +181,11 @@ export default function Matches(props: MatchesProps) {
             <div className="rounded-md bg-red-50 p-4">
               <div className="flex">
                 <div className="flex-shrink-0">
-                  <svg className="h-5 w-5 text-red-400" fill="currentColor" viewBox="0 0 20 20">
+                  <svg
+                    className="h-5 w-5 text-red-400"
+                    fill="currentColor"
+                    viewBox="0 0 20 20"
+                  >
                     <path
                       fillRule="evenodd"
                       d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
